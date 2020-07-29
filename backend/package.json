@@ -4,8 +4,20 @@
   "description": "Kent Hack Enough - Backend",
   "main": "index.js",
   "scripts": {
-    "test": "node test/test.js"
+    "test": "mocha"
   },
   "author": "Chris Seitz (cseitz5)",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^4.1.0",
+    "express": "^4.17.1",
+    "express-session": "^1.17.1",
+    "mongoose": "^5.9.26",
+    "node-fetch": "^2.6.0",
+    "socket.io": "^2.3.0",
+    "uuid": "^8.3.0"
+  },
+  "devDependencies": {
+    "mocha": "^8.0.1"
+  }
 }
