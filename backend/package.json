@@ -14,10 +14,12 @@
     "express-session": "^1.17.1",
     "mongoose": "^5.9.26",
     "node-fetch": "^2.6.0",
+    "response-time": "^2.3.2",
     "socket.io": "^2.3.0",
     "uuid": "^8.3.0"
   },
   "devDependencies": {
+    "autocannon": "^5.1.0",
     "mocha": "^8.0.1"
   }
 }
