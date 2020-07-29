@@ -25,7 +25,13 @@ app.use((req, res, next) => {
   next();
 })
 
-app.use('/api', require('./api').router);
+let db = require('./db');
+global.$db = () => db;
+
+app.use('/api',
+  require('./api').router
+  .use('/db', db.router)
+);
 
 app.get('/views', (req, res, next) => {
   req.session.views = (req.session.views) ? req.session.views + 1 : 1;
