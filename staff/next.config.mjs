@@ -33,6 +33,10 @@ const nextConfig = {
     // @link https://nextjs.org/docs/advanced-features/output-file-tracing#automatically-copying-traced-files-experimental
     output: 'standalone',
 
+    typescript: {
+        ignoreBuildErrors: true,
+    },
+
     experimental: {
 
         browsersListForSwc: true,
@@ -61,7 +65,6 @@ const withDependencies = Object.entries({ ...dependencies, ...devDependencies })
 
 const withModules = [
     ...withDependencies,
-
 ];
 
 export default (withModules.length === 0)

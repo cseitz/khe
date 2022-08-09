@@ -2,6 +2,6 @@
 
 export function What() {
     return <div>
-        whaaaata
+        whaaaatazaa
     </div>
 }
