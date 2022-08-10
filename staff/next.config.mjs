@@ -67,6 +67,8 @@ const withModules = [
     ...withDependencies,
 ];
 
+// require('ts-node').register().
+
 export default (withModules.length === 0)
     ? nextConfig
     : withTM(withModules, {

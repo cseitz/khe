@@ -1,0 +1,25 @@
+{
+  "name": "ui",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "exports": "ts-node exports.ts",
+    "dev": "ts-node exports.ts --watch"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.10.0",
+    "@emotion/styled": "^11.10.0",
+    "@mui/material": "^5.10.0",
+    "api": "*",
+    "ts-node": "^10.9.1"
+  },
+  "exports": {
+    "./navigation": {
+      "default": "./src/navigation.tsx"
+    }
+  },
+  "devDependencies": {
+    "chokidar": "^3.5.3"
+  }
+}

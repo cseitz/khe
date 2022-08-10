@@ -10,6 +10,7 @@
             "outputs": []
         },
         "dev": {
+            "dependsOn": ["exports"],
             "cache": false,
             "outputMode": "none"
         },
