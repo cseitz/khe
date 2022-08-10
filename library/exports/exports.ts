@@ -78,6 +78,9 @@ function updateExports(cwd: string) {
         // console.log('exports', exports);
         const pkg = JSON.parse(await readFile(__package, 'utf8'));
         pkg.exports = exports;
+        if (Object.keys(pkg.exports).length === 0) {
+            delete pkg.exports;
+        }
         await writeFile(__package, JSON.stringify(pkg, null, 2));
         // console.log('updated exports for', cwd);
     })

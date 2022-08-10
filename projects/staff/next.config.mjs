@@ -67,19 +67,11 @@ const withModules = [
     ...withDependencies,
 ];
 
-// require('ts-node').register().
-
-// import Exports from 'exports';
-// Exports();
-
-// import { register } from 'ts-node';
-
-// register({
-//     transpileOnly: true,
-// });
-
-import { DependencyExports } from 'exports';
-DependencyExports(withModules, process.env.NODE_ENV === 'development');
+import { Exports, DependencyExports } from 'exports';
+if (process.env.NODE_ENV === 'development') {
+    Exports(null, true);
+    DependencyExports(withModules, true);
+}
 
 
 export default (withModules.length === 0)
