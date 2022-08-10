@@ -37,8 +37,8 @@
     ".": {
       "default": "./src/index.ts"
     },
-    "./auth/client": {
-      "default": "./src/what.tsx"
+    "./auth": {
+      "default": "./src/services/authentication/client.ts"
     }
   }
 }

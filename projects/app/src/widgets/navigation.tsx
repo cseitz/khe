@@ -7,14 +7,8 @@ import ContactSupportIcon from '@mui/icons-material/ContactSupport';
 import HowToRegIcon from '@mui/icons-material/HowToReg';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import EventNote from '@mui/icons-material/EventNote';
+import { isAuthenticated, isReturningUser } from 'api/auth';
 
-function isAuthenticated() {
-    return false;
-}
-
-function isReturningUser() {
-    return false;
-}
 
 const NavigationConfig: ContextType<typeof NavigationContext> = {
     title: 'KHE',

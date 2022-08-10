@@ -7,13 +7,6 @@ import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import EventNote from '@mui/icons-material/EventNote';
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
 
-function isAuthenticated() {
-    return false;
-}
-
-function isReturningUser() {
-    return false;
-}
 
 const NavigationConfig: ContextType<typeof NavigationContext> = {
     title: 'Staff Portal',
