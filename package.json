@@ -5,10 +5,8 @@
   "license": "MIT",
   "private": true,
   "workspaces": [
-    "api",
-    "app",
-    "staff",
-    "ui"
+    "projects/*",
+    "library/*"
   ],
   "scripts": {
     "dev": "turbo run dev --parallel",

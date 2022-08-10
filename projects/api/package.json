@@ -9,11 +9,11 @@
     "build": "next build"
   },
   "exports": {
-    "./auth/client": {
-      "default": "./src/what.tsx"
-    },
     ".": {
       "default": "./src/index.ts"
+    },
+    "./auth/client": {
+      "default": "./src/what.tsx"
     }
   },
   "dependencies": {

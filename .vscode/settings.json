@@ -37,5 +37,6 @@
         "**/.swc": true,
         "**/next-env.d.ts": true,
         "**/.turbo": true,
+        "**/dist": true,
     },
 }
