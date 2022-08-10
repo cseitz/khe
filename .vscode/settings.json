@@ -8,7 +8,8 @@
         { "icon": "certificate", "extensions": ["encryption"] },
         { "icon": "sso", "extensions": ["authentication"] },
         { "icon": "server", "extensions": ["backend"] },
-        { "icon": "e2e", "extensions": ["socket"] }
+        { "icon": "e2e", "extensions": ["socket"] },
+        { "icon": "package", "extensions": ["projects"] }
     ],
     "vsicons.associations.files": [
         { "icon": "nginx", "extensions": ["template"] },
