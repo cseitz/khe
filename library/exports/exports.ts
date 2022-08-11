@@ -4,6 +4,7 @@ import { basename, dirname, extname, relative, resolve } from 'path';
 import chokidar from 'chokidar';
 import { createInterface } from 'readline';
 import { readdir, readFile, stat, writeFile } from 'fs/promises';
+import { isEqual } from 'lodash';
 
 // console.log('eey');
 
@@ -77,11 +78,14 @@ function updateExports(cwd: string) {
     }, getSource(cwd)).then(async exports => {
         // console.log('exports', exports);
         const pkg = JSON.parse(await readFile(__package, 'utf8'));
+        const originalExports = pkg.exports;
         pkg.exports = exports;
         if (Object.keys(pkg.exports).length === 0) {
             delete pkg.exports;
         }
-        await writeFile(__package, JSON.stringify(pkg, null, 2));
+        if (!isEqual(originalExports, pkg.exports)) {
+            await writeFile(__package, JSON.stringify(pkg, null, 2));
+        }
         // console.log('updated exports for', cwd);
     })
 }
