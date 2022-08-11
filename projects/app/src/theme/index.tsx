@@ -1,4 +1,4 @@
-import { createTheme } from '@mui/material';
+import { createTheme, SxProps } from '@mui/material';
 import { useMemo } from 'react';
 
 declare module '@mui/material/styles' {
@@ -15,9 +15,10 @@ declare module '@mui/material/styles' {
     }
 }
 
+let theme: ReturnType<typeof useAppTheme>;
 export function useAppTheme() {
     const prefersDarkMode = false; //useMediaQuery(`(prefers-color-scheme: dark)`);
-    return useMemo(() => {
+    const _theme = useMemo(() => {
         return createTheme({
             palette: {
                 mode: prefersDarkMode ? 'dark' : 'light',
@@ -46,5 +47,22 @@ export function useAppTheme() {
             }
         })
     }, [prefersDarkMode]);
+    theme = _theme;
+    return _theme;
 }
 
+
+export namespace Theme {
+
+    export function Background(type: 'primary'): SxProps {
+        switch (type) {
+            case 'primary': {
+                return {
+                    color: theme.palette.primary.contrastText,
+                    backgroundColor: theme.palette.primary.light,
+                }
+            }
+        }
+        return {}
+    }
+}

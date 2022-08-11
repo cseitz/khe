@@ -12,11 +12,13 @@ type NavigationComputed<R> = R | ((ctx: { type: 'navbar' | 'drawer' }) => R);
 
 type NavigationEntry = {
     /** The URL that this route corresponds to */
-    url: string
+    url: string;
     /** The content displayed in the button */
-    content: string
+    content: string;
     /** Navbar Alignment */
     alignment?: 'left' | 'right';
+    /** Tooltip to show below the button */
+    tooltip?: string;
     /** Visibility */
     visible?: NavigationComputed<boolean>;
     /** Icon to be added to the button */

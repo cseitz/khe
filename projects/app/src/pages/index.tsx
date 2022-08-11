@@ -1,25 +1,16 @@
+import { getWebsiteContent, WebsiteContent } from 'api/content';
 import { Box, Typography, useTheme } from '@mui/material';
 import { styled } from '@mui/system';
+import { Theme } from '../theme/index';
+import { FAQ } from '../widgets/faq';
 import Head from 'next/head';
-import { useEffect } from 'react';
-import { useAlert } from 'ui/widgets/alert';
 
-function getDetails() {
-    return {
-        landing: {
 
-        },
-        about: {
-
-        }
-    }
-}
-
+type ServerProps = Awaited<ReturnType<typeof getServerSideProps>>['props'];
 export async function getServerSideProps({ req }) {
-
     return {
         props: {
-            ...getDetails(),
+            ...getWebsiteContent(),
         }
     }
 }
@@ -31,42 +22,43 @@ const Section = styled(Box)({
     height: '100vh'
 })
 
-export default function Homepage({ landing, about }: ReturnType<typeof getDetails>) {
+export default function Homepage({ landing, about, faq, footer }: ServerProps) {
 
     return <>
         <Head>
             <title>Kent Hack Enough</title>
         </Head>
         <Box>
-            <Landing />
-            <About />
-            <FrequentlyAskedQuestions />
-            <Footer />
+            <Landing {...landing} />
+            <About {...about} />
+            <FrequentlyAskedQuestions {...faq} />
+            <Footer {...footer} />
         </Box>
     </>
 }
 
 
-function Landing() {
+function Landing(props: WebsiteContent['landing']) {
     const theme = useTheme();
-    return <Section sx={{ backgroundColor: theme.palette.primary.light, textAlign: 'center' }}>
+    return <Section sx={{ ...Theme.Background('primary'), textAlign: 'center' }}>
         <Typography>Landing</Typography>
     </Section>
 }
 
-function About() {
+function About(props: WebsiteContent['about']) {
     return <Section sx={{ backgroundColor: 'lightpink', textAlign: 'center' }}>
         <Typography>About</Typography>
     </Section>
 }
 
-function FrequentlyAskedQuestions() {
+function FrequentlyAskedQuestions(props: WebsiteContent['faq']) {
     return <Section sx={{ backgroundColor: 'cornsilk', alignContent: 'center' }}>
         <Typography>FAQ</Typography>
+        <FAQ {...props} />
     </Section>
 }
 
-function Footer() {
+function Footer(props: WebsiteContent['footer']) {
     return <Typography>Footer</Typography>
 }
 

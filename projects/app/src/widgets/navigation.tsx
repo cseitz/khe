@@ -11,26 +11,30 @@ import { isAuthenticated, isReturningUser } from 'api/auth';
 
 
 const NavigationConfig: ContextType<typeof NavigationContext> = {
-    title: 'KHE',
+    title: 'Kent Hack Enough',
     buttons: [
         {
             url: '/',
             content: 'Home',
+            tooltip: `See details about the hackathon!`,
             icon: <HomeIcon />
         },
         {
             url: '/#faq',
             content: 'FAQ',
+            tooltip: `Have a question? See if it's already answered in our FAQ!`,
             icon: <LiveHelpIcon />
         },
         {
             url: '/events',
-            content: 'Events',
+            content: 'Schedule',
+            tooltip: `View our schedule and sign up for workshops and other activities!`,
             icon: <EventNote />
         },
         {
             url: '/contact',
             content: 'Contact',
+            tooltip: `Need something else? Contact us!`,
             icon: <ContactSupportIcon />
         },
         {
