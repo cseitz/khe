@@ -1,4 +1,4 @@
-import { AppBar, Box, BoxProps, Button, Divider, Drawer, IconButton, List, ListItem, ListItemIcon, ListItemText, Slide, Toolbar, Typography, useMediaQuery, useScrollTrigger } from '@mui/material';
+import { AppBar, Box, BoxProps, Button, Divider, Drawer, IconButton, List, ListItem, ListItemIcon, ListItemText, Slide, Toolbar, Tooltip, Typography, useMediaQuery, useScrollTrigger } from '@mui/material';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
@@ -117,7 +117,7 @@ function HideOnScroll(props: {
         <Box sx={{ position: 'fixed', minHeight: isMobile ? 50 : 25, width: '100%' }}
             onMouseEnter={(event) => {
                 hover.current = event;
-                setTimeout(function() {
+                setTimeout(function () {
                     if (hover.current === event) {
                         setVisible(true);
                     }
@@ -219,7 +219,7 @@ function useNavigation() {
     }
 }
 
-function NavButton({ url, content, visible, icon, iconPlacement, sx }: NavigationEntry & { index: number, sx: any }) {
+function NavButton({ url, content, visible, icon, iconPlacement, tooltip, sx }: NavigationEntry & { index: number, sx: any }) {
     if (typeof visible === 'function') visible = visible({ type: 'navbar' });
     if (typeof iconPlacement === 'function') iconPlacement = iconPlacement({ type: 'navbar' });
 
@@ -228,25 +228,39 @@ function NavButton({ url, content, visible, icon, iconPlacement, sx }: Navigatio
     } else icon = {};
 
     if (visible != undefined && !visible) return <></>;
+
+    const element = <Button color='inherit' {...icon} sx={{ ...sx, }}>
+        {content}
+    </Button>;
+
     return <Link href={url}>
-        <Button color='inherit' {...icon} sx={{ ...sx, }}>
-            {content}
-        </Button>
+        {tooltip ? <Tooltip title={tooltip} disableInteractive PopperProps={{
+            modifiers: [
+                { name: 'offset', options: { offset: [0, -10] } }
+            ]
+        }}>
+            {element}
+        </Tooltip> : element}
     </Link>
 }
 
-function DrawerButton({ url, content, visible, icon, iconPlacement, index, transitionStep, open, sx }: NavigationEntry & { index: number, transitionStep: number, open: boolean, sx: any }) {
+function DrawerButton({ url, content, visible, icon, iconPlacement, tooltip, index, transitionStep, open, sx }: NavigationEntry & { index: number, transitionStep: number, open: boolean, sx: any }) {
     if (typeof visible === 'function') visible = visible({ type: 'drawer' });
 
     if (visible != undefined && !visible) return <></>;
+
+    const element = <ListItem button sx={{ ...sx, }}>
+        {icon && <ListItemIcon>
+            {icon}
+        </ListItemIcon>}
+        <ListItemText primary={content} />
+    </ListItem>;
+
     return <Link href={url}>
         <Slide in={open && transitionStep > index} direction='right' timeout={200}>
-            <ListItem button sx={{ ...sx, }}>
-                {icon && <ListItemIcon>
-                    {icon}
-                </ListItemIcon>}
-                <ListItemText primary={content} />
-            </ListItem>
+            {tooltip ? <Tooltip title={tooltip} disableInteractive placement='right'>
+                {element}
+            </Tooltip> : element}
         </Slide>
     </Link>
 }

@@ -19,11 +19,11 @@
     "./hooks": {
       "default": "./src/hooks/index.ts"
     },
-    "./widgets/navigation": {
-      "default": "./src/widgets/navigation.tsx"
-    },
     "./widgets/alert": {
       "default": "./src/widgets/alert.tsx"
+    },
+    "./widgets/navigation": {
+      "default": "./src/widgets/navigation.tsx"
     }
   },
   "devDependencies": {
