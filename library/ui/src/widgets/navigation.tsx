@@ -1,7 +1,7 @@
-import { AppBar, Box, BoxProps, Button, Divider, Drawer, IconButton, List, ListItem, ListItemIcon, ListItemText, Slide, Toolbar, Tooltip, Typography, useMediaQuery, useScrollTrigger } from '@mui/material';
+import { AppBar, Box, BoxProps, Button, ClickAwayListener, Divider, Drawer, IconButton, List, ListItem, ListItemIcon, ListItemText, Slide, SxProps, Toolbar, Tooltip, Typography, useMediaQuery, useScrollTrigger } from '@mui/material';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { createContext, MouseEvent, useContext, useEffect, useRef, useState } from 'react';
 import MenuIcon from '@mui/icons-material/Menu'
 
 /** @export 'widgets/navigation' */
@@ -10,15 +10,11 @@ import MenuIcon from '@mui/icons-material/Menu'
 
 type NavigationComputed<R> = R | ((ctx: { type: 'navbar' | 'drawer' }) => R);
 
-type NavigationEntry = {
-    /** The URL that this route corresponds to */
-    url: string;
+type BaseNavigationEntry = {
     /** The content displayed in the button */
     content: string;
     /** Navbar Alignment */
     alignment?: 'left' | 'right';
-    /** Tooltip to show below the button */
-    tooltip?: string;
     /** Visibility */
     visible?: NavigationComputed<boolean>;
     /** Icon to be added to the button */
@@ -26,6 +22,21 @@ type NavigationEntry = {
     /** Where should the icon be shown? (false = hidden) */
     iconPlacement?: NavigationComputed<'start' | 'end' | false>;
 }
+
+type NavigationButton = {
+    type: 'button',
+    /** The URL that this route corresponds to */
+    url: string;
+    /** Tooltip to show below the button */
+    tooltip?: string;
+} & BaseNavigationEntry;
+
+type NavigationDropdown = {
+    type: 'dropdown',
+    buttons: NavigationButton[]
+} & BaseNavigationEntry;
+
+type NavigationEntry = NavigationButton | NavigationDropdown;
 
 type NavigationContext = {
     /** Buttons to show in navigation */
@@ -181,15 +192,19 @@ function useNavigation() {
     }
 
     const buttons = {
-        left: ctx.buttons.filter(o => o.alignment !== 'right').map((item, i) => (
+        left: ctx.buttons.filter(o => o.alignment !== 'right').map((item, i) => item.type === 'button' ? (
             <NavButton {...item} index={i} sx={styles.button} key={item.url} />
+        ) : (
+            <NavDropdown {...item} index={i} sx={styles.button} key={item.content} />
         )),
-        right: ctx.buttons.filter(o => o.alignment === 'right').map((item, i) => (
+        right: ctx.buttons.filter(o => o.alignment === 'right').map((item, i) => item.type === 'button' ? (
             <NavButton {...item} index={i} sx={styles.button} key={item.url} />
+        ) : (
+            <NavDropdown {...item} index={i} sx={styles.button} key={item.content} />
         )),
-        drawer: ctx.buttons.map((item, i) => (
+        drawer: ctx.buttons.map((item, i) => item.type === 'button' ? (
             <DrawerButton {...item} index={i} sx={styles.drawer} key={item.url} open={open} transitionStep={transitionStep} />
-        )),
+        ) : null),
     }
 
     // make steps slide in
@@ -219,7 +234,7 @@ function useNavigation() {
     }
 }
 
-function NavButton({ url, content, visible, icon, iconPlacement, tooltip, sx }: NavigationEntry & { index: number, sx: any }) {
+function NavButton({ url, content, visible, icon, iconPlacement, tooltip, sx }: NavigationButton & { index: number, sx: SxProps }) {
     if (typeof visible === 'function') visible = visible({ type: 'navbar' });
     if (typeof iconPlacement === 'function') iconPlacement = iconPlacement({ type: 'navbar' });
 
@@ -244,7 +259,30 @@ function NavButton({ url, content, visible, icon, iconPlacement, tooltip, sx }: 
     </Link>
 }
 
-function DrawerButton({ url, content, visible, icon, iconPlacement, tooltip, index, transitionStep, open, sx }: NavigationEntry & { index: number, transitionStep: number, open: boolean, sx: any }) {
+function NavDropdown({ buttons, content, visible, icon, iconPlacement, index, sx }: NavigationDropdown & { index: number, sx: SxProps }) {
+    if (typeof visible === 'function') visible = visible({ type: 'navbar' });
+    if (typeof iconPlacement === 'function') iconPlacement = iconPlacement({ type: 'navbar' });
+
+    if (icon && iconPlacement) {
+        icon = { [iconPlacement + 'Icon']: icon }
+    } else icon = {};
+
+    if (visible != undefined && !visible) return <></>;
+
+    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+
+    const element = <Button color='inherit' {...icon} sx={{ ...sx, }}
+        onClick={(event) => setAnchorEl(event.target as any)}
+        onMouseEnter={(event) => setAnchorEl(event.target as any)}>
+        {content}
+    </Button>;
+
+    return <ClickAwayListener onClickAway={() => setAnchorEl(null)}>
+        {element}
+    </ClickAwayListener>
+}
+
+function DrawerButton({ url, content, visible, icon, iconPlacement, tooltip, index, transitionStep, open, sx }: NavigationButton & { index: number, transitionStep: number, open: boolean, sx: SxProps }) {
     if (typeof visible === 'function') visible = visible({ type: 'drawer' });
 
     if (visible != undefined && !visible) return <></>;

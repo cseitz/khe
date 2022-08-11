@@ -12,31 +12,37 @@ const NavigationConfig: ContextType<typeof NavigationContext> = {
     title: 'Staff Portal',
     buttons: [
         {
+            type: 'button',
             url: '/',
             content: 'Home',
             icon: <HomeIcon />
         },
         {
+            type: 'button',
             url: '/events',
             content: 'Events',
             icon: <EventNote />
         },
         {
+            type: 'button',
             url: '/tickets',
             content: 'Tickets',
             icon: <ContactSupportIcon />
         },
         {
+            type: 'button',
             url: '/website',
             content: 'Website',
             icon: <DriveFileRenameOutlineIcon />
         },
         {
+            type: 'button',
             url: '/exports',
             content: 'Exports',
             icon: <HomeIcon />,
         },
         {
+            type: 'button',
             url: '/logout',
             content: 'Logout',
             alignment: 'right',

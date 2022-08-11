@@ -14,30 +14,35 @@ const NavigationConfig: ContextType<typeof NavigationContext> = {
     title: 'Kent Hack Enough',
     buttons: [
         {
+            type: 'button',
             url: '/',
             content: 'Home',
             tooltip: `See details about the hackathon!`,
             icon: <HomeIcon />
         },
         {
+            type: 'button',
             url: '/#faq',
             content: 'FAQ',
             tooltip: `Have a question? See if it's already answered in our FAQ!`,
             icon: <LiveHelpIcon />
         },
         {
+            type: 'button',
             url: '/events',
             content: 'Schedule',
             tooltip: `View our schedule and sign up for workshops and other activities!`,
             icon: <EventNote />
         },
         {
+            type: 'button',
             url: '/contact',
             content: 'Contact',
             tooltip: `Need something else? Contact us!`,
             icon: <ContactSupportIcon />
         },
         {
+            type: 'button',
             url: '/login',
             content: 'Login',
             alignment: 'right',
@@ -48,6 +53,7 @@ const NavigationConfig: ContextType<typeof NavigationContext> = {
             }
         },
         {
+            type: 'button',
             url: '/register',
             content: 'Register',
             alignment: 'right',
@@ -58,6 +64,7 @@ const NavigationConfig: ContextType<typeof NavigationContext> = {
             }
         },
         {
+            type: 'button',
             url: '/logout',
             content: 'Logout',
             alignment: 'right',
