@@ -1,6 +1,7 @@
 import { createTheme, CssBaseline, ThemeProvider, useMediaQuery } from '@mui/material';
 import { AppProps } from 'next/app';
 import { useMemo } from 'react';
+import { AlertProvider } from 'ui/widgets/alert';
 import NavigationProvider from '../widgets/navigation';
 
 export default function App({ Component, pageProps }: AppProps) {
@@ -37,7 +38,9 @@ export default function App({ Component, pageProps }: AppProps) {
     return <ThemeProvider theme={theme}>
         <CssBaseline />
         <NavigationProvider>
-            <Component {...pageProps} />
+            <AlertProvider>
+                <Component {...pageProps} />
+            </AlertProvider>
         </NavigationProvider>
     </ThemeProvider>
 }

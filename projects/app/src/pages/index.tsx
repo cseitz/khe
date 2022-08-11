@@ -1,6 +1,8 @@
 import { Box, Typography, useTheme } from '@mui/material';
 import { styled } from '@mui/system';
 import Head from 'next/head';
+import { useEffect } from 'react';
+import { useAlert } from 'ui/widgets/alert';
 
 function getDetails() {
     return {

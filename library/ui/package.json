@@ -16,14 +16,14 @@
     "uuid": "^8.3.2"
   },
   "exports": {
+    "./hooks": {
+      "default": "./src/hooks/index.ts"
+    },
     "./widgets/alert": {
       "default": "./src/widgets/alert.tsx"
     },
     "./widgets/navigation": {
       "default": "./src/widgets/navigation.tsx"
-    },
-    "./hooks": {
-      "default": "./src/hooks/index.ts"
     }
   },
   "devDependencies": {

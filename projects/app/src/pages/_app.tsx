@@ -1,5 +1,6 @@
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import { AppProps } from 'next/app';
+import { AlertProvider } from 'ui/widgets/alert';
 import { useAppTheme } from '../theme/index';
 import NavigationProvider from '../widgets/navigation';
 
@@ -8,7 +9,9 @@ export default function App({ Component, pageProps }: AppProps) {
     return <ThemeProvider theme={theme}>
         <CssBaseline />
         <NavigationProvider>
-            <Component {...pageProps} />
+            <AlertProvider>
+                <Component {...pageProps} />
+            </AlertProvider>
         </NavigationProvider>
     </ThemeProvider>
 }
