@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import MenuIcon from '@mui/icons-material/Menu'
 
-/** @export 'navigation' */
+/** @export 'widgets/navigation' */
 
 // -----------------------------------------------------
 

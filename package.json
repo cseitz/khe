@@ -13,7 +13,8 @@
     "start": "turbo run start --parallel",
     "build": "turbo run build",
     "deploy": "turbo run deploy",
-    "lint": "turbo run lint"
+    "lint": "turbo run lint",
+    "exports": "node library/exports/all"
   },
   "devDependencies": {
     "turbo": "latest"

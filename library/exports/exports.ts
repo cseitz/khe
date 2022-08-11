@@ -121,15 +121,32 @@ function getYarn() {
     return 'npx --location=project yarn ';
 }
 
-export function DependencyExports(dependencies: string[], watch = false) {
-    const workspaces = JSON.parse(execSync(getYarn() + 'workspaces info --json', {
+export function DependencyExports(dependencies: string[] | '*', watch = false) {
+    let _workspaces = execSync(getYarn() + 'workspaces info --json', {
         encoding: 'utf8'
-    }));
+    });
+    if (_workspaces.startsWith('y')) {
+        _workspaces = _workspaces.split('\n').filter(o => {
+            if (o.startsWith(' ') || o.startsWith('{') || o.startsWith('}')) {
+                return true;
+            }
+            return false;
+        }).join('\n');
+    }
+    const workspaces = JSON.parse(_workspaces);
     const found = new Set<string>();
-    for (const dep of dependencies) {
-        if (dep in workspaces) {
-            if (dep != 'exports') {
-                found.add(dep);
+    if (dependencies === '*') {
+        for (const key in workspaces) {
+            if (key != 'exports') {
+                found.add(key);
+            }
+        }
+    } else {
+        for (const dep of dependencies) {
+            if (dep in workspaces) {
+                if (dep != 'exports') {
+                    found.add(dep);
+                }
             }
         }
     }

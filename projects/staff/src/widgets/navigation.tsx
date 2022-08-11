@@ -1,5 +1,5 @@
 import { ContextType } from 'react';
-import { Navigation, NavigationContext } from 'ui/navigation';
+import { Navigation, NavigationContext } from 'ui/widgets/navigation';
 import HomeIcon from '@mui/icons-material/Home';
 import ContactSupportIcon from '@mui/icons-material/ContactSupport';
 // import HowToRegIcon from '@mui/icons-material/HowToReg';
