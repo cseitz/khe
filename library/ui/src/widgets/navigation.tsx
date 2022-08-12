@@ -204,22 +204,6 @@ function useNavigation() {
         }
     }
 
-    // const buttons = {
-    //     left: ctx.buttons.filter(o => o.alignment !== 'right').map((item, i) => item.type === 'button' ? (
-    //         <NavButton {...item} index={i} sx={styles.button} key={item.url} />
-    //     ) : (
-    //         <NavDropdown {...item} index={i} sx={styles.button} key={item.content} />
-    //     )),
-    //     right: ctx.buttons.filter(o => o.alignment === 'right').map((item, i) => item.type === 'button' ? (
-    //         <NavButton {...item} index={i} sx={styles.button} key={item.url} />
-    //     ) : (
-    //         <NavDropdown {...item} index={i} sx={styles.button} key={item.content} />
-    //     )),
-    //     drawer: ctx.buttons.map((item, i) => item.type === 'button' ? (
-    //         <DrawerButton {...item} index={i} sx={styles.drawer} key={item.url} open={open} transitionStep={transitionStep} />
-    //     ) : null),
-    // }
-
     const buttons = {
         left: ctx.buttons.filter(o => o.alignment !== 'right').map((item, index) => item.type === 'button' ? (
             <EntryContext.Provider value={{ ...item, index, sx: styles.button }} key={index}>
@@ -513,104 +497,6 @@ namespace Compose {
 
     }
 
-    // TODO: do more wrappers
-
-}
-
-
-
-
-function NavButton({ url, content, visible, icon, iconPlacement, tooltip, sx, inner = false }: NavigationButton & { index: number, sx: SxProps, inner?: boolean }) {
-    if (typeof visible === 'function') visible = visible({ type: 'navbar' } as any);
-    if (typeof iconPlacement === 'function') iconPlacement = iconPlacement({ type: 'navbar' } as any);
-
-    if (icon && iconPlacement) {
-        icon = { [iconPlacement + 'Icon']: icon }
-    } else icon = {};
-
-    if (visible != undefined && !visible) return <></>;
-
-    const element = !inner ? <Button color='inherit' {...icon} sx={{ ...sx, }}>
-        {content}
-    </Button> : <>
-        {content}
-    </>
-
-    return <Link href={url}>
-        {tooltip ? <Tooltip title={tooltip} disableInteractive PopperProps={{
-            modifiers: [
-                { name: 'offset', options: { offset: [0, -10] } }
-            ],
-            sx: { textAlign: 'center', maxWidth: '200px' }
-        }}>
-            {element}
-        </Tooltip> : element}
-    </Link>
-}
-
-function NavDropdown({ buttons, content, visible, icon, iconPlacement, index, sx }: NavigationDropdown & { index: number, sx: SxProps }) {
-    if (typeof visible === 'function') visible = visible({ type: 'navbar' } as any);
-    if (typeof iconPlacement === 'function') iconPlacement = iconPlacement({ type: 'navbar' } as any);
-
-    if (icon && iconPlacement) {
-        icon = { [iconPlacement + 'Icon']: icon }
-    } else icon = {};
-
-    if (visible != undefined && !visible) return <></>;
-
-    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-    const open = Boolean(anchorEl);
-
-    const handleOpen = (event: any) => {
-        if (!open) setAnchorEl(event.target);
-    };
-    const handleClose = () => setAnchorEl(null);
-
-    const button = <Button color='inherit' {...icon} sx={{ ...sx, }}
-        onClick={handleOpen}
-        onMouseEnter={handleOpen}>
-        {content}
-    </Button>;
-
-    const menu = <Menu anchorEl={anchorEl} open={open} /*onClose={handleClose}*/ disableEnforceFocus>
-        {buttons.map((item, i) => {
-            const content = <MenuItem onClick={handleClose}>
-                {item.content}
-            </MenuItem> as any;
-            return <NavButton {...{ ...item, content }} index={i} sx={sx} key={item.url} inner />
-        })}
-        <Tooltip title='bruh'>
-            <MenuItem>bruh</MenuItem>
-        </Tooltip>
-    </Menu>;
-
-    return <ClickAwayListener onClickAway={handleClose}>
-        <>
-            {button}
-            {menu}
-        </>
-    </ClickAwayListener>
-}
-
-function DrawerButton({ url, content, visible, icon, iconPlacement, tooltip, index, transitionStep, open, sx }: NavigationButton & { index: number, transitionStep: number, open: boolean, sx: SxProps }) {
-    if (typeof visible === 'function') visible = visible({ type: 'drawer' } as any);
-
-    if (visible != undefined && !visible) return <></>;
-
-    const element = <ListItem button sx={{ ...sx, }}>
-        {icon && <ListItemIcon>
-            {icon}
-        </ListItemIcon>}
-        <ListItemText primary={content} />
-    </ListItem>;
-
-    return <Link href={url}>
-        <Slide in={open && transitionStep > index} direction='right' timeout={200}>
-            {tooltip ? <Tooltip title={tooltip} disableInteractive placement='right'>
-                {element}
-            </Tooltip> : element}
-        </Slide>
-    </Link>
 }
 
 // -----------------------------------------------------

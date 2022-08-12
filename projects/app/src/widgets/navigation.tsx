@@ -10,9 +10,14 @@ import EventNote from '@mui/icons-material/EventNote';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { isAuthenticated, isReturningUser } from 'api/auth';
 
+const isMobile = () => (typeof window !== 'undefined' && window.innerWidth <= 600);
 
 const NavigationConfig: ContextType<typeof NavigationContext> = {
-    title: 'Kent Hack Enough',
+    // title: 'Kent Hack Enough',
+    get title() {
+        if (isMobile()) return 'KHE';
+        return 'Kent Hack Enough'
+    },
     buttons: [
         {
             type: 'button',
@@ -69,7 +74,7 @@ const NavigationConfig: ContextType<typeof NavigationContext> = {
             content: 'Register',
             alignment: 'right',
             icon: <HowToRegIcon />,
-            iconPlacement: 'end',
+            iconPlacement: () => !isMobile() ? 'end' : false,
             visible() {
                 return !isAuthenticated() && !isReturningUser();
             }
