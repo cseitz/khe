@@ -1,4 +1,4 @@
-import { AppBar, Box, BoxProps, Button, ClickAwayListener, Divider, Drawer, IconButton, List, ListItem, ListItemIcon, ListItemText, Slide, SxProps, Toolbar, Tooltip, Typography, useMediaQuery, useScrollTrigger } from '@mui/material';
+import { AppBar, Box, BoxProps, Button, ClickAwayListener, Collapse, Divider, Drawer, IconButton, List, ListItem, ListItemButton, ListItemButtonProps, ListItemIcon, ListItemProps, ListItemText, Menu, MenuItem, Slide, SxProps, Toolbar, Tooltip, TooltipProps, Typography, useMediaQuery, useScrollTrigger } from '@mui/material';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { createContext, MouseEvent, useContext, useEffect, useRef, useState } from 'react';
@@ -8,7 +8,12 @@ import MenuIcon from '@mui/icons-material/Menu'
 
 // -----------------------------------------------------
 
-type NavigationComputed<R> = R | ((ctx: { type: 'navbar' | 'drawer' }) => R);
+type CTX = {
+    type: 'navbar' | 'drawer',
+    open: boolean,
+    transitionStep: number,
+}
+type NavigationComputed<R> = R | ((ctx: CTX) => R);
 
 type BaseNavigationEntry = {
     /** The content displayed in the button */
@@ -62,44 +67,49 @@ export function Navigation() {
 }
 
 function NavigationBar(props: ReturnType<typeof useNavigation>) {
-    const { visible, openDrawer, isMobile, buttons } = props;
+    const { visible, openDrawer, isMobile, buttons, open, transitionStep } = props;
     let { title } = useContext(NavigationContext);
     if (title && typeof title === 'string') {
         title = <Typography variant='h6' component='span' sx={{ verticalAlign: 'middle', mr: 2 }}>
             {title}
         </Typography>
     }
-    return <HideOnScroll>
-        <AppBar position='sticky' sx={{ boxShadow: '0px 0px 0px 0px' }} hidden={!visible}>
-            <Toolbar>
+    return <NavContext.Provider value={{ type: 'navbar', open, transitionStep }}>
+        <HideOnScroll>
+            <AppBar position='sticky' sx={{ boxShadow: '0px 0px 0px 0px' }} hidden={!visible}>
+                <Toolbar>
 
-                <IconButton onClick={openDrawer} size='large' edge='start' color='inherit' aria-label='menu' sx={{ mr: 2 }}>
-                    <MenuIcon />
-                </IconButton>
+                    <IconButton onClick={openDrawer} size='large' edge='start' color='inherit' aria-label='menu' sx={{ mr: 2 }}>
+                        <MenuIcon />
+                    </IconButton>
 
-                <Box sx={{ flexGrow: 2 }}>
-                    {title}
-                    {!isMobile && buttons.left}
-                </Box>
+                    <Box sx={{ flexGrow: 2 }}>
+                        {title}
+                        {!isMobile && buttons.left}
+                    </Box>
 
-                {buttons.right}
+                    {buttons.right}
 
-            </Toolbar>
-        </AppBar>
-    </HideOnScroll>
+                </Toolbar>
+            </AppBar>
+        </HideOnScroll>
+    </NavContext.Provider>
 }
 
 function NavigationDrawer(props: ReturnType<typeof useNavigation>) {
-    const { open, setOpen, buttons } = props;
-    return <Drawer anchor='left' open={open} onClose={() => setOpen(false)}>
-        <Box sx={{ width: 250, mt: 5 }}>
-            <Typography variant='h6' sx={{ textAlign: 'center', mb: 3 }}>Navigation</Typography>
-            <Divider orientation='horizontal' />
-            <List>
-                {buttons.drawer}
-            </List>
-        </Box>
-    </Drawer>
+    const { open, setOpen, buttons, transitionStep } = props;
+
+    return <NavContext.Provider value={{ type: 'drawer', open, transitionStep }}>
+        <Drawer anchor='left' open={open} onClose={() => setOpen(false)}>
+            <Box sx={{ width: 250, mt: 5 }}>
+                <Typography variant='h6' sx={{ textAlign: 'center', mb: 3 }}>Navigation</Typography>
+                <Divider orientation='horizontal' />
+                <List>
+                    {buttons.drawer}
+                </List>
+            </Box>
+        </Drawer>
+    </NavContext.Provider>
 }
 
 
@@ -141,6 +151,9 @@ function HideOnScroll(props: {
         </Slide>
     </>
 }
+
+const NavContext = createContext<CTX>(null as any);
+const EntryContext = createContext<NavigationEntry & { sx: SxProps, index: number, inner?: boolean }>(null as any);
 
 function useNavigation() {
     const ctx = useContext(NavigationContext);
@@ -191,20 +204,53 @@ function useNavigation() {
         }
     }
 
+    // const buttons = {
+    //     left: ctx.buttons.filter(o => o.alignment !== 'right').map((item, i) => item.type === 'button' ? (
+    //         <NavButton {...item} index={i} sx={styles.button} key={item.url} />
+    //     ) : (
+    //         <NavDropdown {...item} index={i} sx={styles.button} key={item.content} />
+    //     )),
+    //     right: ctx.buttons.filter(o => o.alignment === 'right').map((item, i) => item.type === 'button' ? (
+    //         <NavButton {...item} index={i} sx={styles.button} key={item.url} />
+    //     ) : (
+    //         <NavDropdown {...item} index={i} sx={styles.button} key={item.content} />
+    //     )),
+    //     drawer: ctx.buttons.map((item, i) => item.type === 'button' ? (
+    //         <DrawerButton {...item} index={i} sx={styles.drawer} key={item.url} open={open} transitionStep={transitionStep} />
+    //     ) : null),
+    // }
+
     const buttons = {
-        left: ctx.buttons.filter(o => o.alignment !== 'right').map((item, i) => item.type === 'button' ? (
-            <NavButton {...item} index={i} sx={styles.button} key={item.url} />
+        left: ctx.buttons.filter(o => o.alignment !== 'right').map((item, index) => item.type === 'button' ? (
+            <EntryContext.Provider value={{ ...item, index, sx: styles.button }} key={index}>
+                <Compose.Bar.Button />
+            </EntryContext.Provider>
         ) : (
-            <NavDropdown {...item} index={i} sx={styles.button} key={item.content} />
+            <EntryContext.Provider value={{ ...item, index, sx: styles.button }} key={index}>
+                <Compose.Bar.Dropdown />
+            </EntryContext.Provider>
         )),
-        right: ctx.buttons.filter(o => o.alignment === 'right').map((item, i) => item.type === 'button' ? (
-            <NavButton {...item} index={i} sx={styles.button} key={item.url} />
+        right: ctx.buttons.filter(o => o.alignment === 'right').map((item, index) => item.type === 'button' ? (
+            <EntryContext.Provider value={{ ...item, index, sx: styles.button }} key={index}>
+                <Compose.Bar.Button />
+            </EntryContext.Provider>
         ) : (
-            <NavDropdown {...item} index={i} sx={styles.button} key={item.content} />
+            <EntryContext.Provider value={{ ...item, index, sx: styles.button }} key={index}>
+                <Compose.Bar.Dropdown />
+            </EntryContext.Provider>
         )),
-        drawer: ctx.buttons.map((item, i) => item.type === 'button' ? (
-            <DrawerButton {...item} index={i} sx={styles.drawer} key={item.url} open={open} transitionStep={transitionStep} />
-        ) : null),
+        // drawer: ctx.buttons.map((item, i) => item.type === 'button' ? (
+        //     <DrawerButton {...item} index={i} sx={styles.drawer} key={item.url} open={open} transitionStep={transitionStep} />
+        // ) : null),
+        drawer: ctx.buttons.map((item, index) => item.type === 'button' ? (
+            <EntryContext.Provider value={{ ...item, index, sx: styles.drawer }} key={index}>
+                <Compose.Drawer.Button />
+            </EntryContext.Provider>
+        ) : (
+            <EntryContext.Provider value={{ ...item, index, sx: styles.drawer }} key={index}>
+                <Compose.Drawer.Dropdown />
+            </EntryContext.Provider>
+        )),
     }
 
     // make steps slide in
@@ -234,9 +280,249 @@ function useNavigation() {
     }
 }
 
-function NavButton({ url, content, visible, icon, iconPlacement, tooltip, sx }: NavigationButton & { index: number, sx: SxProps }) {
-    if (typeof visible === 'function') visible = visible({ type: 'navbar' });
-    if (typeof iconPlacement === 'function') iconPlacement = iconPlacement({ type: 'navbar' });
+const [
+    MuiTooltip,
+    MuiButton,
+    NextLink,
+] = [
+        Tooltip,
+        Button,
+        Link,
+    ];
+namespace Compose {
+    type Props = { children: JSX.Element }
+
+    export function Tooltip({ children, ...props }: Props & Partial<TooltipProps>) {
+        const ctx = useContext(NavContext);
+        const entry = useContext(EntryContext);
+        const { type } = entry;
+        if (type === 'button' && entry.tooltip) {
+            return <MuiTooltip title={entry.tooltip} disableInteractive PopperProps={{
+                modifiers: [
+                    { name: 'offset', options: { offset: [0, -10] } }
+                ],
+                sx: { textAlign: 'center', maxWidth: ctx.type === 'navbar' ? '200px' : '300px' }
+            }} {...props}>
+                {children}
+            </MuiTooltip>
+        }
+        return children;
+    }
+
+    export function Link({ children }: Props) {
+        const entry = useContext(EntryContext);
+        const { type } = entry;
+        if (type === 'button') {
+            return <NextLink href={entry.url}>
+                <a style={{ color: 'inherit', textDecoration: 'none' }}>
+                    {children}
+                </a>
+            </NextLink>
+        }
+        return children;
+    }
+
+    export function Visible({ children }: Props) {
+        const ctx = useContext(NavContext);
+        const entry = useContext(EntryContext);
+        let { visible } = entry;
+        if (typeof visible === 'function') visible = visible(ctx);
+        if (visible != undefined && !visible) return <></>;
+        return children;
+    }
+
+    export namespace Bar {
+
+        export function Button() {
+            const ctx = useContext(NavContext);
+            const entry = useContext(EntryContext);
+            const { content, inner = false, sx } = entry;
+
+            let { icon, iconPlacement } = entry;
+            if (typeof iconPlacement === 'function') iconPlacement = iconPlacement(ctx);
+            if (icon && iconPlacement) {
+                icon = { [iconPlacement + 'Icon']: icon }
+            } else icon = {};
+
+            const element = <MuiButton color='inherit' {...icon} sx={{ ...sx, }}>
+                {content}
+            </MuiButton>;
+
+            return <Visible>
+                <Link>
+                    <Tooltip>
+                        <>
+                            {element}
+                        </>
+                    </Tooltip>
+                </Link>
+            </Visible>
+        }
+
+        export function Dropdown() {
+            const ctx = useContext(NavContext);
+            const entry = useContext(EntryContext);
+            if (entry.type !== 'dropdown') return <></>
+            const { content, buttons, sx } = entry;
+
+            let { icon, iconPlacement } = entry;
+            if (typeof iconPlacement === 'function') iconPlacement = iconPlacement(ctx);
+            if (icon && iconPlacement) {
+                icon = { [iconPlacement + 'Icon']: icon }
+            } else icon = {};
+
+            const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+            const open = Boolean(anchorEl);
+
+            const handleClose = () => {
+                if (open) setAnchorEl(null);
+            }
+            const handleOpen = (event: any) => {
+                if (!open) setAnchorEl(event.target);
+            };
+            const handleMove = (event: any) => {
+                if (!anchorEl) return;
+                const relative = event.clientX - anchorEl.offsetLeft;
+                if (relative <= 0 || relative >= anchorEl.offsetWidth) {
+                    handleClose();
+                }
+                // console.log('mouse move', relative)
+            }
+
+            const button = <MuiButton color='inherit' {...icon} sx={{ ...sx, }}
+                onClick={handleOpen}
+                onMouseEnter={handleOpen}>
+                {content}
+            </MuiButton>;
+
+            const menu = <Menu anchorEl={anchorEl} open={open} onClose={handleClose} PaperProps={{
+                onMouseLeave: handleClose,
+            }} componentsProps={{
+                backdrop: {
+                    onMouseMove: handleMove,
+                },
+            }} onMouseLeave={handleClose} MenuListProps={{
+
+            }} disablePortal keepMounted anchorOrigin={{
+                horizontal: 'center',
+                vertical: 'bottom',
+            }} transformOrigin={{
+                horizontal: 'center',
+                vertical: 'top'
+            }}>
+                {buttons.map((item, index) => {
+                    return <EntryContext.Provider value={{ ...item, index, sx, inner: true }} key={index}>
+                        <Tooltip>
+                            <Link>
+                                <MenuItem sx={{ minWidth: 100, justifyContent: 'center' }} onClick={handleClose}>
+                                    {item.content}
+                                </MenuItem>
+                            </Link>
+                        </Tooltip>
+                    </EntryContext.Provider>
+                })}
+            </Menu>;
+
+            return <Visible>
+                <ClickAwayListener onClickAway={handleClose}>
+                    <>
+                        {button}
+                        {menu}
+                    </>
+                </ClickAwayListener>
+            </Visible>
+        }
+
+    }
+
+
+    export namespace Drawer {
+
+        function Item({ children, ...props }: Props & Partial<ListItemButtonProps>) {
+            const ctx = useContext(NavContext);
+            const { open, transitionStep } = ctx;
+            const entry = useContext(EntryContext);
+            const { index } = entry;
+
+            let { icon, iconPlacement } = entry;
+            if (typeof iconPlacement === 'function') iconPlacement = iconPlacement(ctx);
+
+            return <Slide in={open && transitionStep > index} direction='right' timeout={200}>
+                <ListItemButton {...props}>
+                    {icon && <ListItemIcon>{icon}</ListItemIcon>}
+                    {children}
+                </ListItemButton>
+                {/* <ListItem button {...props}> */}
+                    {/* {icon && <ListItemIcon>{icon}</ListItemIcon>} */}
+                    {/* {icon && iconPlacement === 'start' && <ListItemIcon>{icon}</ListItemIcon>} */}
+                    {/* {children} */}
+                    {/* {icon && iconPlacement === 'end' && <ListItemIcon>{icon}</ListItemIcon>} */}
+                    {/* {icon && <ListItemIcon>{icon}</ListItemIcon>} */}
+                {/* </ListItem> */}
+            </Slide>
+        }
+
+        export function Button(props: Partial<ListItemButtonProps>) {
+            const entry = useContext(EntryContext);
+            const { content, inner = false, sx } = entry;
+
+            return <Link>
+                <Item {...props}>
+                    <Tooltip placement='right'>
+                        <ListItemText>{content}</ListItemText>
+                    </Tooltip>
+                </Item>
+            </Link>
+        }
+
+        export function Dropdown() {
+            const ctx = useContext(NavContext);
+            const entry = useContext(EntryContext);
+            if (entry.type !== 'dropdown') return <></>
+            const { content, buttons, sx } = entry;
+
+            const [open, setOpen] = useState(false);
+            const [showBottomDivider, setShowBottomDivider] = useState(false);
+            useEffect(() => {
+                if (open) {
+                    setShowBottomDivider(true);
+                }
+            }, [open]);
+
+            const menu = <Collapse in={open} onExited={() => {
+                setShowBottomDivider(false);
+            }}>
+                <Divider orientation='horizontal' />
+                <List>
+                    {buttons.map((item, index) => (
+                        <EntryContext.Provider value={{ ...item, index, sx, inner: true }} key={index}>
+                            <Button sx={{ pl: 4 }} />
+                        </EntryContext.Provider>
+                    ))}
+                </List>
+            </Collapse>;
+
+            return <>
+                <Item onClick={() => setOpen(!open)}>
+                    <ListItemText>{content}</ListItemText>
+                </Item>
+                {menu}
+                {showBottomDivider && <Divider orientation='horizontal' />}
+            </>
+        }
+
+    }
+
+    // TODO: do more wrappers
+
+}
+
+
+
+
+function NavButton({ url, content, visible, icon, iconPlacement, tooltip, sx, inner = false }: NavigationButton & { index: number, sx: SxProps, inner?: boolean }) {
+    if (typeof visible === 'function') visible = visible({ type: 'navbar' } as any);
+    if (typeof iconPlacement === 'function') iconPlacement = iconPlacement({ type: 'navbar' } as any);
 
     if (icon && iconPlacement) {
         icon = { [iconPlacement + 'Icon']: icon }
@@ -244,15 +530,18 @@ function NavButton({ url, content, visible, icon, iconPlacement, tooltip, sx }: 
 
     if (visible != undefined && !visible) return <></>;
 
-    const element = <Button color='inherit' {...icon} sx={{ ...sx, }}>
+    const element = !inner ? <Button color='inherit' {...icon} sx={{ ...sx, }}>
         {content}
-    </Button>;
+    </Button> : <>
+        {content}
+    </>
 
     return <Link href={url}>
         {tooltip ? <Tooltip title={tooltip} disableInteractive PopperProps={{
             modifiers: [
                 { name: 'offset', options: { offset: [0, -10] } }
-            ]
+            ],
+            sx: { textAlign: 'center', maxWidth: '200px' }
         }}>
             {element}
         </Tooltip> : element}
@@ -260,8 +549,8 @@ function NavButton({ url, content, visible, icon, iconPlacement, tooltip, sx }: 
 }
 
 function NavDropdown({ buttons, content, visible, icon, iconPlacement, index, sx }: NavigationDropdown & { index: number, sx: SxProps }) {
-    if (typeof visible === 'function') visible = visible({ type: 'navbar' });
-    if (typeof iconPlacement === 'function') iconPlacement = iconPlacement({ type: 'navbar' });
+    if (typeof visible === 'function') visible = visible({ type: 'navbar' } as any);
+    if (typeof iconPlacement === 'function') iconPlacement = iconPlacement({ type: 'navbar' } as any);
 
     if (icon && iconPlacement) {
         icon = { [iconPlacement + 'Icon']: icon }
@@ -270,20 +559,41 @@ function NavDropdown({ buttons, content, visible, icon, iconPlacement, index, sx
     if (visible != undefined && !visible) return <></>;
 
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+    const open = Boolean(anchorEl);
 
-    const element = <Button color='inherit' {...icon} sx={{ ...sx, }}
-        onClick={(event) => setAnchorEl(event.target as any)}
-        onMouseEnter={(event) => setAnchorEl(event.target as any)}>
+    const handleOpen = (event: any) => {
+        if (!open) setAnchorEl(event.target);
+    };
+    const handleClose = () => setAnchorEl(null);
+
+    const button = <Button color='inherit' {...icon} sx={{ ...sx, }}
+        onClick={handleOpen}
+        onMouseEnter={handleOpen}>
         {content}
     </Button>;
 
-    return <ClickAwayListener onClickAway={() => setAnchorEl(null)}>
-        {element}
+    const menu = <Menu anchorEl={anchorEl} open={open} /*onClose={handleClose}*/ disableEnforceFocus>
+        {buttons.map((item, i) => {
+            const content = <MenuItem onClick={handleClose}>
+                {item.content}
+            </MenuItem> as any;
+            return <NavButton {...{ ...item, content }} index={i} sx={sx} key={item.url} inner />
+        })}
+        <Tooltip title='bruh'>
+            <MenuItem>bruh</MenuItem>
+        </Tooltip>
+    </Menu>;
+
+    return <ClickAwayListener onClickAway={handleClose}>
+        <>
+            {button}
+            {menu}
+        </>
     </ClickAwayListener>
 }
 
 function DrawerButton({ url, content, visible, icon, iconPlacement, tooltip, index, transitionStep, open, sx }: NavigationButton & { index: number, transitionStep: number, open: boolean, sx: SxProps }) {
-    if (typeof visible === 'function') visible = visible({ type: 'drawer' });
+    if (typeof visible === 'function') visible = visible({ type: 'drawer' } as any);
 
     if (visible != undefined && !visible) return <></>;
 

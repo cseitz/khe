@@ -7,6 +7,7 @@ import ContactSupportIcon from '@mui/icons-material/ContactSupport';
 import HowToRegIcon from '@mui/icons-material/HowToReg';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import EventNote from '@mui/icons-material/EventNote';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { isAuthenticated, isReturningUser } from 'api/auth';
 
 
@@ -40,6 +41,16 @@ const NavigationConfig: ContextType<typeof NavigationContext> = {
             content: 'Contact',
             tooltip: `Need something else? Contact us!`,
             icon: <ContactSupportIcon />
+        },
+        {
+            type: 'dropdown',
+            content: 'Dropdown',
+            alignment: 'right',
+            icon: <KeyboardArrowDownIcon />,
+            buttons: [
+                { type: 'button', content: 'Test', url: '/test', tooltip: 'bruh', icon: <ContactSupportIcon /> },
+                { type: 'button', content: 'What', url: '/what', icon: <ContactSupportIcon /> }
+            ]
         },
         {
             type: 'button',
