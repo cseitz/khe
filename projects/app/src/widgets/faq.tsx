@@ -1,4 +1,4 @@
-import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Box } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { SyntheticEvent, useState } from 'react';
 import { WebsiteContent } from 'api/content';
@@ -14,7 +14,7 @@ export function FAQ(props: WebsiteContent['faq']) {
         setExpanded(newExpanded ? question : null);
     }
 
-    return <>
+    return <Box sx={{ maxWidth: 700, mx: 'auto' }}>
         {questions.map(({ question, answer }, i) => (
             <Accordion expanded={expanded === i} onChange={handleChange(i)} key={question}>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -25,5 +25,5 @@ export function FAQ(props: WebsiteContent['faq']) {
                 </AccordionDetails>
             </Accordion>
         ))}
-    </>
+    </Box>
 }

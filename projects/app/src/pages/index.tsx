@@ -1,9 +1,10 @@
 import { getWebsiteContent, WebsiteContent } from 'api/content';
-import { Box, Typography, useTheme } from '@mui/material';
+import { Box, Button, Typography, useTheme } from '@mui/material';
 import { styled } from '@mui/system';
 import { Theme } from '../theme/index';
 import { FAQ } from '../widgets/faq';
 import Head from 'next/head';
+import Link from 'next/link';
 
 
 type ServerProps = Awaited<ReturnType<typeof getServerSideProps>>['props'];
@@ -19,7 +20,15 @@ export async function getServerSideProps({ req }) {
 const Section = styled(Box)({
     display: 'flex',
     flexDirection: 'column',
-    height: '100vh'
+    paddingTop: '50px',
+    paddingBottom: '50px',
+})
+
+const FullSection = styled(Section)({
+    display: 'flex',
+    flexDirection: 'column',
+    minHeight: '100vh',
+
 })
 
 export default function Homepage({ landing, about, faq, footer }: ServerProps) {
@@ -40,9 +49,9 @@ export default function Homepage({ landing, about, faq, footer }: ServerProps) {
 
 function Landing(props: WebsiteContent['landing']) {
     const theme = useTheme();
-    return <Section sx={{ ...Theme.Background('primary'), textAlign: 'center' }}>
+    return <FullSection sx={{ ...Theme.Background('primary'), textAlign: 'center' }}>
         <Typography>Landing</Typography>
-    </Section>
+    </FullSection>
 }
 
 function About(props: WebsiteContent['about']) {
@@ -52,9 +61,17 @@ function About(props: WebsiteContent['about']) {
 }
 
 function FrequentlyAskedQuestions(props: WebsiteContent['faq']) {
-    return <Section sx={{ backgroundColor: 'cornsilk', alignContent: 'center' }}>
-        <Typography>FAQ</Typography>
-        <FAQ {...props} />
+    return <Section id="faq" sx={{ backgroundColor: 'cornsilk', alignContent: 'center', p: 5, minHeight: '80vh' }}>
+        <Typography variant='h4' sx={{ textAlign: 'center', pt: 2, pb: 5 }}>Frequently Asked Questions</Typography>
+        <Box>
+            <FAQ {...props} />
+            <Box sx={{ py: 8, textAlign: 'center' }}>
+                <Typography sx={{ pb: 1 }}>Still have questions?</Typography>
+                <Link href='/contact'>
+                    <Button variant='contained' color='inherit'>Contact Us</Button>
+                </Link>
+            </Box>
+        </Box>
     </Section>
 }
 

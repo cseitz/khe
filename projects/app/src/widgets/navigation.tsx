@@ -1,4 +1,4 @@
-import { ContextType } from 'react';
+import { ContextType, useMemo } from 'react';
 import { Navigation, NavigationContext } from 'ui/widgets/navigation';
 import HomeIcon from '@mui/icons-material/Home';
 import LoginIcon from '@mui/icons-material/Login';
@@ -9,92 +9,92 @@ import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import EventNote from '@mui/icons-material/EventNote';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { isAuthenticated, isReturningUser } from 'api/auth';
+import { useMediaQuery } from '@mui/material';
 
-const isMobile = () => (typeof window !== 'undefined' && window.innerWidth <= 600);
 
-const NavigationConfig: ContextType<typeof NavigationContext> = {
-    // title: 'Kent Hack Enough',
-    get title() {
-        if (isMobile()) return 'KHE';
-        return 'Kent Hack Enough'
-    },
-    buttons: [
-        {
-            type: 'button',
-            url: '/',
-            content: 'Home',
-            tooltip: `See details about the hackathon!`,
-            icon: <HomeIcon />
-        },
-        {
-            type: 'button',
-            url: '/#faq',
-            content: 'FAQ',
-            tooltip: `Have a question? See if it's already answered in our FAQ!`,
-            icon: <LiveHelpIcon />
-        },
-        {
-            type: 'button',
-            url: '/events',
-            content: 'Schedule',
-            tooltip: `View our schedule and sign up for workshops and other activities!`,
-            icon: <EventNote />
-        },
-        {
-            type: 'button',
-            url: '/contact',
-            content: 'Contact',
-            tooltip: `Need something else? Contact us!`,
-            icon: <ContactSupportIcon />
-        },
-        {
-            type: 'dropdown',
-            content: 'Dropdown',
-            alignment: 'right',
-            icon: <KeyboardArrowDownIcon />,
-            buttons: [
-                { type: 'button', content: 'Test', url: '/test', tooltip: 'bruh', icon: <ContactSupportIcon /> },
-                { type: 'button', content: 'What', url: '/what', icon: <ContactSupportIcon /> }
-            ]
-        },
-        {
-            type: 'button',
-            url: '/login',
-            content: 'Login',
-            alignment: 'right',
-            icon: <LoginIcon />,
-            iconPlacement: 'end',
-            visible() {
-                return !isAuthenticated() && isReturningUser();
-            }
-        },
-        {
-            type: 'button',
-            url: '/register',
-            content: 'Register',
-            alignment: 'right',
-            icon: <HowToRegIcon />,
-            iconPlacement: () => !isMobile() ? 'end' : false,
-            visible() {
-                return !isAuthenticated() && !isReturningUser();
-            }
-        },
-        {
-            type: 'button',
-            url: '/logout',
-            content: 'Logout',
-            alignment: 'right',
-            icon: <ExitToAppIcon />,
-            iconPlacement: 'end',
-            visible() {
-                return !!isAuthenticated();
-            }
-        },
-    ]
+function useNavigationConfig(): ContextType<typeof NavigationContext> {
+    const isMobile = useMediaQuery('(max-width:600px)');
+    return {
+        title: isMobile ? 'KHE' : 'Kent Hack Enough',
+        buttons: [
+            {
+                type: 'button',
+                url: '/',
+                content: 'Home',
+                tooltip: `See details about the hackathon!`,
+                icon: <HomeIcon />
+            },
+            {
+                type: 'button',
+                url: '/#faq',
+                content: 'FAQ',
+                tooltip: `Have a question? See if it's already answered in our FAQ!`,
+                icon: <LiveHelpIcon />
+            },
+            {
+                type: 'button',
+                url: '/events',
+                content: 'Schedule',
+                tooltip: `View our schedule and sign up for workshops and other activities!`,
+                icon: <EventNote />
+            },
+            {
+                type: 'button',
+                url: '/contact',
+                content: 'Contact',
+                tooltip: `Need something else? Contact us!`,
+                icon: <ContactSupportIcon />
+            },
+            {
+                type: 'dropdown',
+                content: 'Dropdown',
+                alignment: 'right',
+                icon: <KeyboardArrowDownIcon />,
+                buttons: [
+                    { type: 'button', content: 'Test', url: '/test', tooltip: 'bruh', icon: <ContactSupportIcon /> },
+                    { type: 'button', content: 'What', url: '/what', icon: <ContactSupportIcon /> }
+                ]
+            },
+            {
+                type: 'button',
+                url: '/login',
+                content: 'Login',
+                alignment: 'right',
+                icon: <LoginIcon />,
+                iconPlacement: 'end',
+                visible() {
+                    return !isAuthenticated() && isReturningUser();
+                }
+            },
+            {
+                type: 'button',
+                url: '/register',
+                content: 'Register',
+                alignment: 'right',
+                icon: <HowToRegIcon />,
+                iconPlacement: () => !isMobile ? 'end' : false,
+                visible() {
+                    return !isAuthenticated() && !isReturningUser();
+                }
+            },
+            {
+                type: 'button',
+                url: '/logout',
+                content: 'Logout',
+                alignment: 'right',
+                icon: <ExitToAppIcon />,
+                iconPlacement: 'end',
+                visible() {
+                    return !!isAuthenticated();
+                }
+            },
+        ]
+    }
 }
 
 export default function NavigationProvider(props: { children: any }) {
-    return <NavigationContext.Provider value={NavigationConfig}>
+    const config = useNavigationConfig();
+    return <NavigationContext.Provider value={config}>
         <Navigation />
         {props.children}
     </NavigationContext.Provider>

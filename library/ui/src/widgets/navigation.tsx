@@ -83,7 +83,7 @@ function NavigationBar(props: ReturnType<typeof useNavigation>) {
                         <MenuIcon />
                     </IconButton>
 
-                    <Box sx={{ flexGrow: 2 }}>
+                    <Box sx={{ flexGrow: 2 }} suppressHydrationWarning>
                         {title}
                         {!isMobile && buttons.left}
                     </Box>
