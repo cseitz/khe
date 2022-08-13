@@ -1,0 +1,15 @@
+{
+  "name": "utils",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "next": "^12.2.5",
+    "superjson": "^1.9.1"
+  },
+  "exports": {
+    "./next": {
+      "default": "./src/next.ts"
+    }
+  }
+}

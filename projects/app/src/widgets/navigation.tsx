@@ -33,7 +33,7 @@ function useNavigationConfig(): ContextType<typeof NavigationContext> {
             },
             {
                 type: 'button',
-                url: '/events',
+                url: '/schedule',
                 content: 'Schedule',
                 tooltip: `View our schedule and sign up for workshops and other activities!`,
                 icon: <EventNote />

@@ -5,8 +5,8 @@ import { SuperJSONResult } from 'superjson/dist/types';
 
 /** @export 'content' */
 
-export function getWebsiteContent() {
-    const content = superjson.serialize(<WebsiteContent>{
+export function getWebsiteContent(): WebsiteContent {
+    return {
         landing: {},
         about: {},
         faq: {
@@ -30,8 +30,7 @@ export function getWebsiteContent() {
                 }
             ]
         }
-    });
-    return { content }
+    }
 }
 
 
@@ -47,11 +46,11 @@ export const ContentContext = createContext<WebsiteContent>({} as any);
 export const useContent = function(serverProps?: Partial<WebsiteContent> | SuperJSONResult | { content: SuperJSONResult }) {
     const ctx = useContext(ContentContext);
     if (serverProps) {
-        if ('json' in serverProps) {
+        /*if ('json' in serverProps) {
             serverProps = superjson.deserialize(serverProps);
         } else if ('content' in serverProps) {
             serverProps = superjson.deserialize(serverProps.content);
-        }
+        }*/
         Object.assign(ctx, serverProps);
     } else {
         if (Object.keys(ctx).length === 0) {

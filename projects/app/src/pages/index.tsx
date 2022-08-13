@@ -7,15 +7,25 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { Schedule } from '../widgets/schedule';
 import { useContext } from 'react';
+import { ServerProps } from 'utils/next';
 
-type ServerProps = Awaited<ReturnType<typeof getServerSideProps>>['props'];
-export async function getServerSideProps({ req }) {
+// type ServerProps = Awaited<ReturnType<typeof getServerSideProps>>['props'];
+// export async function getServerSideProps({ req }) {
+//     return {
+//         props: {
+//             ...getWebsiteContent(),
+//         }
+//     }
+// }
+
+export const getServerSideProps = ServerProps(async ({}) => {
+    const content = getWebsiteContent();
     return {
         props: {
-            ...getWebsiteContent(),
+            content,
         }
     }
-}
+})
 
 
 const Section = styled(Box)({
@@ -32,8 +42,8 @@ const FullSection = styled(Section)({
 
 })
 
-export default function Homepage(props: ServerProps) {
-    const { landing, about, faq, footer } = useContent(props);
+export default function Homepage({ content }: typeof getServerSideProps) {
+    const { landing, about, faq, footer } = useContent(content);
     return <>
         <Head>
             <title>Kent Hack Enough</title>

@@ -1,10 +1,11 @@
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import { AppProps } from 'next/app';
 import { AlertProvider } from 'ui/widgets/alert';
+import { withSuperJSON } from 'utils/next';
 import { useAppTheme } from '../theme/index';
 import NavigationProvider from '../widgets/navigation';
 
-export default function App({ Component, pageProps }: AppProps) {
+export function App({ Component, pageProps }: AppProps) {
     const theme = useAppTheme();
     return <ThemeProvider theme={theme}>
         <CssBaseline />
@@ -15,3 +16,5 @@ export default function App({ Component, pageProps }: AppProps) {
         </NavigationProvider>
     </ThemeProvider>
 }
+
+export default withSuperJSON(App);
