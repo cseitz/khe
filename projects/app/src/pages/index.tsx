@@ -6,17 +6,7 @@ import { FAQ } from '../widgets/faq';
 import Head from 'next/head';
 import Link from 'next/link';
 import { Schedule } from '../widgets/schedule';
-import { useContext } from 'react';
 import { ServerProps } from 'utils/next';
-
-// type ServerProps = Awaited<ReturnType<typeof getServerSideProps>>['props'];
-// export async function getServerSideProps({ req }) {
-//     return {
-//         props: {
-//             ...getWebsiteContent(),
-//         }
-//     }
-// }
 
 export const getServerSideProps = ServerProps(async ({}) => {
     const content = getWebsiteContent();
@@ -49,10 +39,6 @@ export default function Homepage({ content }: typeof getServerSideProps) {
             <title>Kent Hack Enough</title>
         </Head>
         <Box>
-            {/* <Landing {...landing} />
-            <About {...about} />
-            <FrequentlyAskedQuestions {...faq} />
-            <Footer {...footer} /> */}
             <Landing />
             <About />
             <FrequentlyAskedQuestions />
@@ -62,7 +48,6 @@ export default function Homepage({ content }: typeof getServerSideProps) {
 }
 
 
-// function Landing(props: WebsiteContent['landing']) {
 function Landing(props: {}) {
     const {} = useContent();
     const theme = useTheme();
@@ -71,16 +56,14 @@ function Landing(props: {}) {
     </FullSection>
 }
 
-// function About(props: WebsiteContent['about']) {
 function About(props: {}) {
     const {} = useContent();
     return <Section sx={{ backgroundColor: 'lightpink', textAlign: 'center' }}>
         <Typography>About</Typography>
-        
+        <Schedule.Preview />
     </Section>
 }
 
-// function FrequentlyAskedQuestions(props: WebsiteContent['faq']) {
 function FrequentlyAskedQuestions(props: {}) {
     const { faq } = useContent();
     return <Section id="faq" sx={{ backgroundColor: 'cornsilk', alignContent: 'center', p: 5, minHeight: '80vh' }}>
@@ -97,7 +80,6 @@ function FrequentlyAskedQuestions(props: {}) {
     </Section>
 }
 
-// function Footer(props: WebsiteContent['footer']) {
 function Footer(props: {}) {
     const {} = useContent();
     return <Typography>Footer</Typography>
