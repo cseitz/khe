@@ -29,7 +29,6 @@ export function StaticProps<T extends GetStaticProps>(getter: T): InferGetStatic
 export function withSuperJSON(App: (AppProps) => JSX.Element) {
     return function(_: AppProps) {
         const props = _.pageProps;
-        console.log({ props })
         if (props && 'json' in props) {
             const result = superjson.deserialize(props);
             delete props.json;

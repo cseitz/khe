@@ -16,7 +16,6 @@ const serverRuntimeConfig = {
 /** @type {import('./config').PublicRuntimeConfig} */
 const publicRuntimeConfig = {
     mode: process.env.NODE_ENV,
-    api: process.env.API,
 }
 
 /** @type {import('next').NextConfig} */

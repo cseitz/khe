@@ -4,8 +4,8 @@
   "main": "./src/index.ts",
   "license": "MIT",
   "scripts": {
-    "dev": "next dev --port 8000",
-    "start": "next start --port 8000",
+    "dev": "next dev --port 7999",
+    "start": "next start --port 7999",
     "build": "next build"
   },
   "dependencies": {
