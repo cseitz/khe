@@ -1,8 +1,9 @@
 import { Box } from '@mui/material';
-import { EventData, getWebsiteContent, WebsiteContent } from 'api/content';
+import { EventData, getWebsiteContent, useContent, WebsiteContent } from 'api/content';
+import { InferGetServerSidePropsType } from 'next';
 
 
-type ServerProps = Awaited<ReturnType<typeof getServerSideProps>>['props'];
+type ServerProps = InferGetServerSidePropsType<typeof getServerSideProps>;
 export async function getServerSideProps({ req }) {
     return {
         props: {
@@ -12,8 +13,8 @@ export async function getServerSideProps({ req }) {
 }
 
 
-export default function EventsPage({ events: { title, subtitle, events} }: ServerProps) {
-
+export default function EventsPage(props: ServerProps) {
+    const { events } = useContent(props).events;
     return <Box>
         {events.map(event => (
             <EventItem {...event} key={event.id} />

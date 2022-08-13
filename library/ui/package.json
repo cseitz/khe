@@ -24,6 +24,9 @@
     },
     "./widgets/navigation": {
       "default": "./src/widgets/navigation.tsx"
+    },
+    "./widgets/old-navigation": {
+      "default": "./src/widgets/old-navigation.tsx"
     }
   },
   "devDependencies": {
