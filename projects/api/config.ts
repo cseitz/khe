@@ -7,8 +7,7 @@ import { get, merge } from 'lodash';
 export type ServerRuntimeConfig = ServerRuntime.Config;
 namespace ServerRuntime {
     export type Config = {
-        
-        
+        mongo: string;
     }
 }
 
