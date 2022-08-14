@@ -10,7 +10,7 @@ const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
 /** @type {import('./config').ServerRuntimeConfig} */
 const serverRuntimeConfig = {
-    
+    mongo: process.env.MONGO,
 }
 
 /** @type {import('./config').PublicRuntimeConfig} */

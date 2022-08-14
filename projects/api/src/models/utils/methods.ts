@@ -16,9 +16,9 @@ type MethodOptions = {
     audit: ReturnType<typeof Auditor>;
 }
 
-export class Methods<Context = {}> {
+export class Methods<Context extends object = {}, Audit = MethodOptions['audit']> {
 
-    audit: MethodOptions['audit']
+    audit: Audit;
 
     // @ts-ignore
     constructor(public options: MethodOptions, public context: MethodContext & Context = DEFAULT_METHOD_CONTEXT) {

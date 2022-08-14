@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Box, Button, TextField } from '@mui/material';
 import { ContactInput, contactInput } from 'api/data/contact';
+import { api } from 'api/trpc';
 import { Controller, useForm } from 'react-hook-form';
 
 
@@ -10,21 +11,25 @@ export default function ContactPage() {
         <Box sx={{ mx: 'auto', width: 'min(500px, 90vw)', mt: 10 }}>
             <ContactForm />
         </Box>
+        <ListTickets />
     </Box>
 }
 
 function ContactForm() {
     const form = useForm<ContactInput>({
-
         resolver: zodResolver(contactInput),
         mode: 'all',
         delayError: 1500,
         reValidateMode: 'onBlur'
     });
 
+    const mutation = api.tickets.create.useMutation();
+    const createTicket = mutation.mutate;
+
     const { control, register } = form;
-    const handleSubmit = form.handleSubmit(function (data) {
+    const handleSubmit = form.handleSubmit((data) => {
         console.log({ data })
+        createTicket(data)
     });
 
     const isError = false; // !form.formState.isValid;
@@ -71,5 +76,12 @@ function ContactForm() {
 
         <Button fullWidth variant='contained' type='submit' disabled={isError} sx={{ mx: 'auto', maxWidth: 200 }}>Submit</Button>
 
+    </Box>
+}
+
+function ListTickets() {
+    const query = api.tickets.list.useQuery({});
+    return <Box>
+        {JSON.stringify(query?.data || {})}
     </Box>
 }

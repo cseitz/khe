@@ -15,6 +15,7 @@ export type PublicRuntimeConfig = PublicRuntime.Config;
 namespace PublicRuntime {
     export type Config = {
         mode: 'development' | 'production' | 'test';
+        api?: string;
     }
 }
 

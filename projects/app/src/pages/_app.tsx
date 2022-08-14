@@ -1,4 +1,5 @@
 import { CssBaseline, ThemeProvider } from '@mui/material';
+import { trpc } from 'api/trpc';
 import { AppProps } from 'next/app';
 import { AlertProvider } from 'ui/widgets/alert';
 import { withSuperJSON } from 'utils/next';
@@ -17,4 +18,6 @@ export function App({ Component, pageProps }: AppProps) {
     </ThemeProvider>
 }
 
-export default withSuperJSON(App);
+export default trpc.withTRPC(
+    withSuperJSON(App)
+);

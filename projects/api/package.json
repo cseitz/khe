@@ -10,11 +10,13 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^2.9.7",
+    "@tanstack/react-query": "^4.1.3",
     "@trpc/client": "^10.0.0-alpha.42",
     "@trpc/next": "^10.0.0-alpha.42",
     "@trpc/react": "^10.0.0-alpha.42",
     "@trpc/server": "^10.0.0-alpha.42",
     "chalk": "^5.0.1",
+    "cors": "^2.8.5",
     "exports": "*",
     "lodash": "^4.17.21",
     "mongoose": "^6.5.2",
@@ -35,11 +37,14 @@
     "ts-toolbelt": "^9.6.0"
   },
   "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
     "./content": {
       "default": "./src/content.ts"
     },
-    ".": {
-      "default": "./src/index.ts"
+    "./trpc": {
+      "default": "./src/trpc/client.ts"
     },
     "./data/contact": {
       "default": "./src/data/input/contact.ts"
@@ -47,11 +52,11 @@
     "./data/register": {
       "default": "./src/data/input/register.ts"
     },
-    "./data/user": {
-      "default": "./src/data/models/user.ts"
-    },
     "./data/ticket": {
       "default": "./src/data/models/ticket.ts"
+    },
+    "./data/user": {
+      "default": "./src/data/models/user.ts"
     },
     "./auth": {
       "default": "./src/services/authentication/client.ts"

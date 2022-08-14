@@ -7,6 +7,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { Schedule } from '../widgets/schedule';
 import { ServerProps } from 'utils/next';
+import { api } from 'api/trpc';
 
 export const getServerSideProps = ServerProps(async ({}) => {
     const content = getWebsiteContent();
@@ -51,8 +52,10 @@ export default function Homepage({ content }: typeof getServerSideProps) {
 function Landing(props: {}) {
     const {} = useContent();
     const theme = useTheme();
+    const ping = api.ping.useQuery();
     return <FullSection sx={{ ...Theme.Background('primary'), textAlign: 'center' }}>
         <Typography>Landing</Typography>
+        {ping?.data?.toString()}
     </FullSection>
 }
 
