@@ -41,6 +41,18 @@
     ".": {
       "default": "./src/index.ts"
     },
+    "./data/contact": {
+      "default": "./src/data/input/contact.ts"
+    },
+    "./data/register": {
+      "default": "./src/data/input/register.ts"
+    },
+    "./data/user": {
+      "default": "./src/data/models/user.ts"
+    },
+    "./data/ticket": {
+      "default": "./src/data/models/ticket.ts"
+    },
     "./auth": {
       "default": "./src/services/authentication/client.ts"
     }
