@@ -19,9 +19,13 @@ export namespace UserInfo {
     export type Personal = z.infer<typeof personal>;
     export const personal = z.object({
         /** User's first Name */
-        firstName: z.string(),
+        firstName: z.string()
+            .min(2, { message: 'Too short!' })
+            .max(60, { message: 'Too long!' }),
         /** User's last Name */
-        lastName: z.string(),
+        lastName: z.string()
+            .min(2, { message: 'Too short!' })
+            .max(60, { message: 'Too long!' }),
         // phone: z.string().optional(),
 
         /** User's age (at least 16) */

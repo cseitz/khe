@@ -1,8 +1,8 @@
 import { createNextApiHandler } from '@trpc/server/adapters/next';
 import { t } from '.';
 import { ticketRouter } from '../models/ticket';
-// import { userRouter } from '../models/user';
-// import { Authentication } from '../services/authentication';
+import { userRouter } from '../models/user';
+import { Authentication } from '../services/authentication';
 import { createContext } from './context';
 
 
@@ -12,12 +12,12 @@ export type Router = typeof router;
 /** Import model routers */
 const models = t.router({
     tickets: ticketRouter,
-    // users: userRouter,
+    users: userRouter,
 })
 
 /** Import service routers */
 const services = t.router({
-    // auth: Authentication.router,
+    auth: Authentication.router,
 })
 
 /** Define one-off routes here */

@@ -15,7 +15,7 @@ export const registerInput = userData.pick({
     password: PASSWORD,
     confirm: PASSWORD,
     agree: z.boolean(),
-})
+}).required();
 
 
 export type StaffRegisterInput = z.infer<typeof staffRegisterInput>;

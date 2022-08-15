@@ -1,10 +1,11 @@
 import { createTheme, CssBaseline, ThemeProvider, useMediaQuery } from '@mui/material';
+import { trpc } from 'api/trpc';
 import { AppProps } from 'next/app';
 import { useMemo } from 'react';
 import { AlertProvider } from 'ui/widgets/alert';
 import NavigationProvider from '../widgets/navigation';
 
-export default function App({ Component, pageProps }: AppProps) {
+function App({ Component, pageProps }: AppProps) {
     const prefersDarkMode = useMediaQuery(`(prefers-color-scheme: dark)`);
     const theme = useMemo(() => {
         return createTheme({
@@ -44,3 +45,5 @@ export default function App({ Component, pageProps }: AppProps) {
         </NavigationProvider>
     </ThemeProvider>
 }
+
+export default trpc.withTRPC(App);

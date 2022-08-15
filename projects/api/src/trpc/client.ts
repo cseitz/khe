@@ -1,13 +1,11 @@
 import { createTRPCClient, CreateTRPCClientOptions, createTRPCClientProxy, httpBatchLink, httpLink, loggerLink } from '@trpc/client';
 import { setupTRPC } from '@trpc/next';
-import { createReactQueryHooks } from '@trpc/react';
 import { createProxy } from '@trpc/server/shared';
 import { get, merge } from 'lodash';
 import { NextPageContext } from 'next';
-import { useEffect, useMemo } from 'react';
-import { QueriesObserver, QueryClient, useQueryClient } from 'react-query';
 import superjson from 'superjson';
 import { Config } from '../../config';
+import { Authentication } from '../services/authentication/client';
 import type { Router } from './router';
 
 /** @export 'trpc' */
@@ -31,7 +29,7 @@ function options(config: {
         ],
         headers() {
             return {
-                // ...Authentication.headers(),
+                ...Authentication.headers(),
             };
         },
     }

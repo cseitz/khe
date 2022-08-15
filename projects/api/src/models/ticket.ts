@@ -1,6 +1,5 @@
 import { TRPCError } from '@trpc/server';
-import { Model, Schema } from 'mongoose';
-import { z } from 'zod';
+import { HydratedDocument, Model, Schema } from 'mongoose';
 import { TicketData, ticketData, TicketStatus } from '../data/models/ticket';
 import { Auditor } from '../services/audit/auditor';
 import { t } from '../trpc';
@@ -11,7 +10,8 @@ import { buildModel } from './utils/model';
 /** Ticket Model Definition */
 export namespace Ticket {
     export const shape = ticketData;
-    export type Data = z.infer<typeof ticketData>;
+    export type Data = TicketData;
+    export type Document = HydratedDocument<Schema>;
     export type Schema = Data & typeof SchemaMethods & {
 
     }
