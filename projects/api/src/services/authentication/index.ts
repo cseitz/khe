@@ -9,7 +9,9 @@ import { UserData, UserRole } from '../../data/models/user';
 import { User, Users } from '../../models/user';
 import { buildModel } from '../../models/utils/model';
 import { t } from '../../trpc/index';
-
+import { AuthTokenData, AUTH_COOKIE, AUTH_TOKEN_GENERATE_SIZE, AUTH_TOKEN_LENGTH } from './constants';
+import { AuthToken } from './token';
+import cookie from 'cookie';
 
 namespace Error {
 
@@ -63,7 +65,7 @@ namespace Session {
 
     export type Data = z.infer<typeof shape>;
     export type Document = HydratedDocument<Schema>;
-    export type Instance = LeanDocument<Schema>;
+    export type Instance = LeanDocument<Schema> & typeof extendedSession;
     export type Schema = Data & {
         user: LeanDocument<UserData>;
     };
@@ -95,34 +97,56 @@ namespace Session {
 
     const Model = buildModel<Type>('Session', schema);
 
+    /** Computes additional data appended to key */
+    async function computeKey(session: Instance) {
+        const { user } = session;
+        const key = session.key.slice(0, AUTH_TOKEN_LENGTH);
+        return key + await AuthToken.sign({
+            role: user.role,
+        });
+    }
+
+
+    const extendedSession = {
+        eey() {
+            return 'hi';
+        },
+        compute() {
+            return computeKey(this)
+        }
+    }
+
 
     /** Retrieves the session */
     export async function get(token: string) {
+        token = token.slice(0, AUTH_TOKEN_LENGTH);
         const session = await Model.findOne({ key: token }).lean();
         if (session) {
             session.user = await Users.get({ email: session.email }).lean();
-            return session;
+            // @ts-ignore
+            session.__proto__ = extendedSession;
+            return session as any as Instance;
         }
-        // if (!session) {
-        //     throw Error.Verification('Session is not in database');
-        // }
-        // return session;
     }
 
     /** Updates the session */
-    export async function update(session: Instance | string, changes: UpdateQuery<Data>) {
-        if (typeof session == 'object') session = session.key;
-        return await Model.updateOne({ key: session }, changes).lean();
+    export async function update(session: Instance | string, changes: UpdateQuery<Data> = {}) {
+        if (typeof session == 'object') session = session.key.slice(0, AUTH_TOKEN_LENGTH);
+
+        await Model.updateOne({ key: session }, changes).lean();
+        return await get(session) as NonNullable<Instance>;
     }
 
     /** Creates a session from a user */
     export async function create(user: User.Document) {
         const session = new Model({
             email: user.email,
-            key: randomBytes(48).toString('hex'),
+            key: randomBytes(AUTH_TOKEN_GENERATE_SIZE).toString('hex'),
         });
         await session.save();
-        return session;
+        const doc = await get(session.key);
+        if (!doc) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
+        return doc;
     }
 
     /** Invalidates a session */
@@ -132,6 +156,7 @@ namespace Session {
     }
 
 }
+
 
 export namespace Authentication {
 
@@ -145,9 +170,9 @@ export namespace Authentication {
             return {
                 token: req.headers['authorization']
             }
-        } else if (req.cookies['authorization']) {
+        } else if (req.cookies[AUTH_COOKIE]) {
             return {
-                token: req.headers['authorization']
+                token: req.cookies[AUTH_COOKIE]
             }
         }
         return {}
@@ -162,13 +187,8 @@ export namespace Authentication {
                 const session = await Session.get(ctx.token);
                 if (session) {
                     return session;
-                    // return [
-                    //     session,
-                    //     await Users.get(session.email).lean()
-                    // ] as [Session.Instance, LeanDocument<User.Data>]
                 }
             }
-            // return [null, null]
         }
 
         /** Adds the session to the TRPC Context */
@@ -242,6 +262,7 @@ export namespace Authentication {
     }
 
 
+
     export const router = t.router({
 
         /** Creates a session */
@@ -263,9 +284,10 @@ export namespace Authentication {
                 }
 
                 const session = await Session.create(user);
+                const token = await session.compute();
 
                 return {
-                    token: session.key,
+                    token,
                 };
 
             }),
@@ -285,7 +307,13 @@ export namespace Authentication {
             .query(async ({ ctx }) => {
                 const { session } = ctx;
                 const { user } = session;
-                return user;
+                const token = await session.compute();
+                const setCookie = cookie.serialize(AUTH_COOKIE, token, {
+                    secure: process.env.NODE_ENV === 'production',
+                    path: '/',
+                });
+                ctx.res.setHeader('Set-Cookie', setCookie)
+                return { user, token };
             }),
 
         /** Checks if an email is taken */

@@ -17,9 +17,11 @@
     "@trpc/server": "^10.0.0-alpha.42",
     "bcrypt": "^5.0.1",
     "chalk": "^5.0.1",
+    "cookie": "^0.5.0",
     "cors": "^2.8.5",
     "exports": "*",
     "immer": "^9.0.15",
+    "jose": "^4.8.3",
     "lodash": "^4.17.21",
     "mongoose": "^6.5.2",
     "next": "^12.2.4",
@@ -33,6 +35,7 @@
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
+    "@types/cookie": "^0.5.1",
     "@types/lodash": "^4.14.182",
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
@@ -40,11 +43,11 @@
     "ts-toolbelt": "^9.6.0"
   },
   "exports": {
-    ".": {
-      "default": "./src/index.ts"
-    },
     "./content": {
       "default": "./src/content.ts"
+    },
+    ".": {
+      "default": "./src/index.ts"
     },
     "./trpc": {
       "default": "./src/trpc/client.ts"
@@ -55,17 +58,20 @@
     "./data/login": {
       "default": "./src/data/input/login.ts"
     },
-    "./data/ticket": {
-      "default": "./src/data/models/ticket.ts"
-    },
     "./data/register": {
       "default": "./src/data/input/register.ts"
     },
     "./data/user": {
       "default": "./src/data/models/user.ts"
     },
+    "./data/ticket": {
+      "default": "./src/data/models/ticket.ts"
+    },
     "./auth": {
       "default": "./src/services/authentication/client.ts"
+    },
+    "./auth/middleware": {
+      "default": "./src/services/authentication/middleware.ts"
     }
   }
 }

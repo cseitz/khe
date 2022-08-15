@@ -1,5 +1,6 @@
 import { inferAsyncReturnType, initTRPC } from '@trpc/server';
 import { CreateNextContextOptions } from '@trpc/server/adapters/next';
+import { Authentication } from '../services/authentication';
 import { Context } from './context';
 import { transformer } from './transform';
 
@@ -7,7 +8,7 @@ import { transformer } from './transform';
 /** TRPC Procedure Meta
  * Used to define custom route properties
  */
-export type Meta = /*Authentication.Meta &*/ {
+export type Meta = Authentication.Meta & {
     
 }
 
