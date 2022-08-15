@@ -6,11 +6,14 @@ import { loginInput, LoginInput } from 'api/data/login';
 import { api } from 'api/trpc';
 import { get } from 'lodash';
 import Head from 'next/head';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useRouter } from 'next/router';
+
 
 export default function LoginPage() {
     const [tab, setTab] = useState<'register' | 'login'>('login');
+
     return <Box>
 
         <Head>

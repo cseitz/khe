@@ -182,7 +182,7 @@ export namespace Authentication {
     export namespace Middleware {
 
         /** Retrieves a session from TRPC Context */
-        async function getSession(ctx: typeof t['_config']['ctx']) {
+        export async function getSession(ctx: typeof t['_config']['ctx']) {
             if (ctx.token) {
                 const session = await Session.get(ctx.token);
                 if (session) {
@@ -303,9 +303,12 @@ export namespace Authentication {
 
         /** Retrieves your own user */
         me: t.procedure
-            .use(Middleware.isAuthenticated)
+            // .use(Middleware.isAuthenticated)
             .query(async ({ ctx }) => {
-                const { session } = ctx;
+                const session = await Middleware.getSession(ctx);
+                if (!session) {
+                    return {};
+                }
                 const { user } = session;
                 const token = await session.compute();
                 const setCookie = cookie.serialize(AUTH_COOKIE, token, {

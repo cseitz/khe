@@ -30,6 +30,10 @@ namespace PublicRuntime {
 function Config<
     P extends Toolbelt.Object.Paths<PublicRuntimeConfig>
 >(...path: P): Toolbelt.Object.Path<PublicRuntimeConfig, P> {
+    if (process.env.NEXT_RUNTIME === 'edge') {
+        // @ts-ignore
+        return process.env[path.join('_').toUpperCase()];
+    }
     return get(getConfig().publicRuntimeConfig, path);
 }
 
@@ -42,6 +46,10 @@ function Config<
 Config.Server = function <
     P extends Toolbelt.Object.Paths<ServerRuntimeConfig & PublicRuntimeConfig>
 >(...path: P): Toolbelt.Object.Path<ServerRuntimeConfig & PublicRuntimeConfig, P> {
+    if (process.env.NEXT_RUNTIME === 'edge') {
+        // @ts-ignore
+        return process.env[path.join('_').toUpperCase()];
+    }
     const merged = merge({}, getConfig().serverRuntimeConfig, getConfig().publicRuntimeConfig)
     return get(merged, path);
 }

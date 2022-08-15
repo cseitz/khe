@@ -1,5 +1,4 @@
 import { NextFetchEvent, NextMiddleware, NextRequest, NextResponse } from 'next/server';
-import cookie from 'cookie';
 import { AUTH_COOKIE } from './constants';
 import { AuthToken } from './token';
 import { UserRole } from '../../data/models/user';
@@ -39,3 +38,18 @@ export async function isStaff(request: NextRequest, event: NextFetchEvent) {
     return false;
 }
 
+
+
+// export async function middlewareLogout(request: NextRequest) {
+//     const result = await fetch(process.env.API + '/api/trpc/auth.logout', {
+//         method: 'POST',
+//         headers: {
+//             'content-type': 'application/json',
+//             'authorization': request.cookies.get('authorization'),
+//         },
+//         body: JSON.stringify({ json: null })
+//     }).then(res => res.text());
+//     if (result === 'ok') {
+//         request.cookies.delete(AUTH_COOKIE);
+//     }
+// }

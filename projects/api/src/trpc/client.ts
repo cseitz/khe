@@ -13,7 +13,6 @@ import type { Router } from './router';
 function options(config: {
     ctx?: NextPageContext
 }): CreateTRPCClientOptions<Router> {
-    const { ctx } = config;
     const url = Config('api') ? `${Config('api')}/api/trpc` : '/api/trpc';
 
     return {

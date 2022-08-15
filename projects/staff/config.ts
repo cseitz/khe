@@ -28,23 +28,32 @@ namespace PublicRuntime {
  * Example: `{ path: { to: { entry: 'value' }}}`
  * - `Config('path', 'to', 'entry'): 'value'`
  */
-function Config<
-    P extends Toolbelt.Object.Paths<PublicRuntimeConfig>
+ function Config<
+ P extends Toolbelt.Object.Paths<PublicRuntimeConfig>
 >(...path: P): Toolbelt.Object.Path<PublicRuntimeConfig, P> {
-    return get(getConfig().publicRuntimeConfig, path);
+ if (process.env.NEXT_RUNTIME === 'edge') {
+     console.log(process.env);
+     // @ts-ignore
+     return process.env[path.join('_').toUpperCase()];
+ }
+ return get(getConfig().publicRuntimeConfig, path);
 }
 
 /** Retrieves an entry from ServerRuntimeConfig or PublicRuntimeConfig
- * @param path A list of keys to scope into a config entry.
- * 
- * Example: `{ path: { to: { entry: 'value' }}}`
- * - `Config.Server('path', 'to', 'entry'): 'value'`
- */
+* @param path A list of keys to scope into a config entry.
+* 
+* Example: `{ path: { to: { entry: 'value' }}}`
+* - `Config.Server('path', 'to', 'entry'): 'value'`
+*/
 Config.Server = function <
-    P extends Toolbelt.Object.Paths<ServerRuntimeConfig & PublicRuntimeConfig>
+ P extends Toolbelt.Object.Paths<ServerRuntimeConfig & PublicRuntimeConfig>
 >(...path: P): Toolbelt.Object.Path<ServerRuntimeConfig & PublicRuntimeConfig, P> {
-    const merged = merge({}, getConfig().serverRuntimeConfig, getConfig().publicRuntimeConfig)
-    return get(merged, path);
+ if (process.env.NEXT_RUNTIME === 'edge') {
+     // @ts-ignore
+     return process.env[path.join('_').toUpperCase()];
+ }
+ const merged = merge({}, getConfig().serverRuntimeConfig, getConfig().publicRuntimeConfig)
+ return get(merged, path);
 }
 
 export { Config };

@@ -7,24 +7,38 @@ export namespace AuthToken {
         role: string
     }
 
-
     export function sign(data: Data) {
-        const iat = Math.floor(Date.now() / 1000);
-        return new SignJWT(data)
-            .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })
-            .setIssuedAt(iat)
-            .sign(new TextEncoder().encode(secret));
+        return btoa(JSON.stringify(data))
     }
 
     export async function verify(sessionKey: string) {
-        const token = sessionKey.slice(AUTH_TOKEN_LENGTH);
-        const { payload } = await jwtVerify(token, new TextEncoder().encode(secret));
-        return payload as Data;
+        return decode(sessionKey);
     }
 
     export function decode(sessionKey: string) {
         const token = sessionKey.slice(AUTH_TOKEN_LENGTH);
-        const payload = decodeJwt(token) as Data;
+        const payload = JSON.parse(atob(token)) as Data;
         return payload;
     }
+
+
+    // export function sign(data: Data) {
+    //     const iat = Math.floor(Date.now() / 1000);
+    //     return new SignJWT(data)
+    //         .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })
+    //         .setIssuedAt(iat)
+    //         .sign(new TextEncoder().encode(secret));
+    // }
+
+    // export async function verify(sessionKey: string) {
+    //     const token = sessionKey.slice(AUTH_TOKEN_LENGTH);
+    //     const { payload } = await jwtVerify(token, new TextEncoder().encode(secret));
+    //     return payload as Data;
+    // }
+
+    // export function decode(sessionKey: string) {
+    //     const token = sessionKey.slice(AUTH_TOKEN_LENGTH);
+    //     const payload = decodeJwt(token) as Data;
+    //     return payload;
+    // }
 }
