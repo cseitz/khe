@@ -23,7 +23,10 @@ function toObjects(data: any, depth = 0) {
 
 
 export const transformer = {
-    input: superjson,
+    input: {
+        serialize: obj => obj ? superjson.serialize(obj) : obj,
+        deserialize: superjson.deserialize,
+    },
     output: {
         serialize: obj => superjson.serialize(toObjects(obj)),
         deserialize: str => superjson.deserialize(str),

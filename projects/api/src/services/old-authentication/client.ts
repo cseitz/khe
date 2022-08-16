@@ -1,3 +1,8 @@
+
+
+
+/** @export 'auth' */
+
 import { useQueryClient } from '@tanstack/react-query';
 import { HTTPHeaders } from '@trpc/client';
 import { useRouter } from 'next/router';
@@ -6,7 +11,7 @@ import { api } from '../../trpc/client';
 import { AUTH_COOKIE, AUTH_STORAGE_KEY } from './constants';
 import { AuthToken } from './token';
 
-/** @export 'auth' */
+
 
 
 export namespace Authentication {

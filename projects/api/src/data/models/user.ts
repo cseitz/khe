@@ -109,6 +109,7 @@ export enum UserRole {
 
 export enum UserStatus {
     Pending = 'pending',
+    Applied = 'applied',
     Approved = 'approved',
     Checked = 'checked',
     Denied = 'denied',
