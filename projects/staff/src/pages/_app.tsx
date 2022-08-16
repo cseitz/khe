@@ -1,5 +1,5 @@
 import { createTheme, CssBaseline, ThemeProvider, useMediaQuery } from '@mui/material';
-import { SessionProvider, useSession } from 'api/auth';
+import { Authentication } from 'api/auth';
 import { UserRole } from 'api/data/user';
 import { trpc } from 'api/trpc';
 import { differenceWith, fromPairs, isEqual, reduce, toPairs } from 'lodash';
@@ -47,59 +47,42 @@ function App({ Component, pageProps }: AppProps) {
                 <Component {...pageProps} />
             </AlertProvider>
         </NavigationProvider>
+        <SessionController />
     </ThemeProvider >
 }
 
-function Guard() {
+export default trpc.withTRPC(App);
+
+
+
+function SessionController() {
     const router = useRouter();
-    const session = useSession();
+    const [query, session] = Authentication.useSession();
     const [previous, setPrevious] = useState(session);
     useEffect(() => {
         setPrevious(session);
         const [before, after] = [previous, session];
-        console.log({ before, after });
+
         if (!before) {
             // user logged in
-            console.log('Logged in');
-
-
 
         } else if (!after) {
             // user logged out
-            console.log('Logged out')
-
 
         } else {
             // something changes
 
+            const diff: Partial<NonNullable<typeof session>> = fromPairs(
+                differenceWith(toPairs(before || {}), toPairs(after || {}), isEqual)
+            );
 
         }
 
-        // const diff: Partial<NonNullable<typeof session>> = fromPairs(
-        //     differenceWith(toPairs(before || {}), toPairs(after || {}), isEqual)
-        // );
-        // console.log('changes', diff);
 
-        // if (after && diff.role) {
-        //     // role changed
-
-        //     const { role } = after;
-        //     if (role === UserRole.Staff || role === UserRole.Admin) {
-        //         if (router.pathname.startsWith('/login')) {
-        //             router.push('/');
-        //         }
-        //     } else {
-        //         if (!(
-        //             router.pathname.startsWith('/login')
-        //             || router.pathname.startsWith('/logout')
-        //         )) {
-        //             router.push('/login')
-        //         }
-        //     }
-
-        // }
 
     }, [session]);
+
+
     useEffect(() => {
 
         let role = session ? session?.role : false;
@@ -117,9 +100,9 @@ function Guard() {
         }
 
     }, [session ? session?.role : false])
+
     return <div>
         session: {JSON.stringify(session)}
     </div>
 }
 
-export default trpc.withTRPC(App);

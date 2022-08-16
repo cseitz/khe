@@ -99,7 +99,7 @@ export namespace Authentication {
         user: Omit<UserData, 'password'>;
     } & AuthTokenData | null | false;
 
-    export function useSessionLogic() {
+    export function useSession() {
         const router = useRouter();
         const query = api.auth.me.useQuery();
 
@@ -115,7 +115,7 @@ export namespace Authentication {
             }
         }, [query.dataUpdatedAt]);
 
-        console.log(query.data);
+        // console.log(query.data);
 
         return [query, session] as [typeof query, SessionData];
     }
@@ -127,26 +127,26 @@ export namespace Authentication {
 const { isAuthenticated, isReturningUser } = Authentication;
 export { isAuthenticated, isReturningUser }
 
-export const SessionContext = createContext<Authentication.SessionData>(null);
+// export const SessionContext = createContext<Authentication.SessionData>(null);
 
-export function SessionProvider(props: { children: any }) {
-    const { children } = props;
-    // const [query, data] = Authentication.useSessionLogic();
-    const data = useRef<ContextType<typeof SessionContext>>(null);
-    return <SessionContext.Provider value={data.current}>
-        <>
-            <SessionUpdater ref={data} />
-            {children}
-        </>
-    </SessionContext.Provider>
-}
+// export function SessionProvider(props: { children: any }) {
+//     const { children } = props;
+//     // const [query, data] = Authentication.useSessionLogic();
+//     const data = useRef<ContextType<typeof SessionContext>>(null);
+//     return <SessionContext.Provider value={data.current}>
+//         <>
+//             <SessionUpdater ref={data} />
+//             {children}
+//         </>
+//     </SessionContext.Provider>
+// }
 
-function SessionUpdater(props: { ref: any }) {
-    const [query, data] = Authentication.useSessionLogic();
+// function SessionUpdater(props: { ref: any }) {
+//     const [query, data] = Authentication.useSessionLogic();
     
-    return <></>
-}
+//     return <></>
+// }
 
-export function useSession() {
-    return useContext(SessionContext)
-}
+// export function useSession() {
+//     return useContext(SessionContext)
+// }

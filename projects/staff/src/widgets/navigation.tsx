@@ -6,6 +6,7 @@ import ContactSupportIcon from '@mui/icons-material/ContactSupport';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import EventNote from '@mui/icons-material/EventNote';
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
+import { useRouter } from 'next/router';
 
 
 const NavigationConfig: ContextType<typeof NavigationContext> = {
@@ -19,15 +20,15 @@ const NavigationConfig: ContextType<typeof NavigationContext> = {
         },
         {
             type: 'button',
-            url: '/events',
-            content: 'Events',
-            icon: <EventNote />
-        },
-        {
-            type: 'button',
             url: '/tickets',
             content: 'Tickets',
             icon: <ContactSupportIcon />
+        },
+        {
+            type: 'button',
+            url: '/schedule',
+            content: 'Schedule',
+            icon: <EventNote />
         },
         {
             type: 'button',
@@ -53,8 +54,13 @@ const NavigationConfig: ContextType<typeof NavigationContext> = {
 }
 
 export default function NavigationProvider(props: { children: any }) {
+    const router = useRouter();
+    const show = !(
+        router.pathname.startsWith('/login')
+        || router.pathname.startsWith('/logout')
+    );
     return <NavigationContext.Provider value={NavigationConfig}>
-        <Navigation />
+        {show && <Navigation />}
         {props.children}
     </NavigationContext.Provider>
 }

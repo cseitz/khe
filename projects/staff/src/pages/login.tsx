@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Box, Button, Grid, Link, TextField, Typography } from '@mui/material';
-import { Authentication, useSession } from 'api/auth';
+import { Authentication } from 'api/auth';
 import { staffRegisterInput, StaffRegisterInput } from 'api/data/register';
 import { loginInput, LoginInput } from 'api/data/login';
 import { api } from 'api/trpc';
@@ -38,15 +38,6 @@ export default function LoginPage() {
 
         </Box>
 
-        <ShowMe />
-
-    </Box>
-}
-
-function ShowMe() {
-    const session = useSession();
-    return <Box>
-        {JSON.stringify(session || {})}
     </Box>
 }
 
