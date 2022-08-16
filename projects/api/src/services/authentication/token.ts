@@ -2,10 +2,12 @@ import type { UserRole } from '../../data/models/user'
 import { AUTH_TOKEN_LENGTH } from './constants';
 
 
+export type AuthTokenData = {
+    role: UserRole
+}
+
 export namespace AuthToken {
-    export type Data = {
-        role: UserRole
-    }
+    export type Data = AuthTokenData;
 
     export function create(data: Data) {
         return btoa(JSON.stringify(data));

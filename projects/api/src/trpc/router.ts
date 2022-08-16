@@ -2,7 +2,7 @@ import { createNextApiHandler } from '@trpc/server/adapters/next';
 import { t } from '.';
 import { ticketRouter } from '../models/ticket';
 import { userRouter } from '../models/user';
-import { Authentication } from '../services/authentication';
+import { Authentication } from '../services/authentication/index';
 import { createContext } from './context';
 
 

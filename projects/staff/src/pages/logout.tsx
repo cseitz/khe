@@ -8,7 +8,7 @@ export default function LogoutPage() {
     const router = useRouter();
     const mutation = Authentication.useLogout({
         onSuccess() {
-            // router.push('/login');
+            router.push('/login');
         },
         onError() {
             router.back();

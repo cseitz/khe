@@ -3,7 +3,6 @@ import { AUTH_COOKIE } from './constants';
 import { AuthToken } from './token';
 import { UserRole } from '../../data/models/user';
 
-/** @export 'auth/middleware' */
 
 /** Next.js Middleware
  * - Checks if the user is authenticated.

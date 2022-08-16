@@ -1,10 +1,11 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { HTTPHeaders } from '@trpc/client';
 import { useRouter } from 'next/router';
+import { createContext, useContext, useEffect, useMemo } from 'react';
 import { UserData } from '../../data/models/user';
 import { api } from '../../trpc/client';
 import { AUTH_COOKIE, AUTH_STORAGE_KEY } from './constants';
-import { AuthToken } from './token';
+import { AuthToken, AuthTokenData } from './token';
 
 /** @export 'auth' */
 
@@ -45,10 +46,11 @@ export namespace Authentication {
             localStorage.removeItem(STORAGE_KEY);
             document.cookie = `${AUTH_COOKIE}=${newToken}; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
         }
-        
+
     }
 
     export function useLogin(props: Parameters<typeof api.auth.login.useMutation>[0] = {}) {
+        // @ts-ignore
         const { onSuccess = null, ...rest } = props
         const client = useQueryClient();
         return api.auth.login.useMutation({
@@ -64,6 +66,7 @@ export namespace Authentication {
     }
 
     export function useLogout(props: Parameters<typeof api.auth.logout.useMutation>[0] = {}) {
+        // @ts-ignore
         const { onSuccess = null, ...rest } = props
         const client = useQueryClient();
         return api.auth.logout.useMutation({
@@ -85,11 +88,36 @@ export namespace Authentication {
             setToken(token);
             Myself = user;
         } else if (me.data) {
-            if (!router.pathname.startsWith('/login')) {
-                console.log('oof, you are dead')
-            }
+            // if (!router.pathname.startsWith('/login')) {
+            //     console.log('oof, you are dead')
+            // }
         }
         return me;
+    }
+
+    export type SessionData = {
+        user: Omit<UserData, 'password'>;
+    } & AuthTokenData | null | false;
+
+    export function useSessionLogic() {
+        const router = useRouter();
+        const query = api.auth.me.useQuery();
+
+        const session = useMemo<SessionData>(() => {
+            if (query.data === undefined) return null;
+            if (query.data === false) return false;
+            // if (query.data) return false;
+            const { token, user } = query.data;
+            setToken(token);
+            return {
+                ...AuthToken.decode(token),
+                user,
+            }
+        }, [query.dataUpdatedAt]);
+
+        console.log(query.data);
+
+        return [query, session] as [typeof query, SessionData];
     }
 
 
@@ -98,3 +126,17 @@ export namespace Authentication {
 
 const { isAuthenticated, isReturningUser } = Authentication;
 export { isAuthenticated, isReturningUser }
+
+export const SessionContext = createContext<Authentication.SessionData>(null);
+
+export function SessionProvider(props: { children: any }) {
+    const { children } = props;
+    const [query, data] = Authentication.useSessionLogic();
+    return <SessionContext.Provider value={data}>
+        {children}
+    </SessionContext.Provider>
+}
+
+export function useSession() {
+    return useContext(SessionContext)
+}

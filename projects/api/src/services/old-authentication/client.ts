@@ -1,7 +1,6 @@
 
 
 
-/** @export 'auth' */
 
 import { useQueryClient } from '@tanstack/react-query';
 import { HTTPHeaders } from '@trpc/client';

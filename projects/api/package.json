@@ -52,26 +52,26 @@
     "./trpc": {
       "default": "./src/trpc/client.ts"
     },
-    "./data/login": {
-      "default": "./src/data/input/login.ts"
+    "./data/ticket": {
+      "default": "./src/data/models/ticket.ts"
     },
     "./data/contact": {
       "default": "./src/data/input/contact.ts"
     },
-    "./data/register": {
-      "default": "./src/data/input/register.ts"
-    },
-    "./data/ticket": {
-      "default": "./src/data/models/ticket.ts"
+    "./data/login": {
+      "default": "./src/data/input/login.ts"
     },
     "./data/user": {
       "default": "./src/data/models/user.ts"
     },
+    "./data/register": {
+      "default": "./src/data/input/register.ts"
+    },
     "./auth": {
-      "default": "./src/services/old-authentication/client.ts"
+      "default": "./src/services/authentication/client.tsx"
     },
     "./auth/middleware": {
-      "default": "./src/services/old-authentication/middleware.ts"
+      "default": "./src/services/authentication/middleware.ts"
     }
   }
 }

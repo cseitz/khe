@@ -6,6 +6,7 @@ import { UserData } from '../../data/models/user';
 import { User, Users } from '../../models/user';
 import { buildModel } from '../../models/utils/model';
 import { AUTH_TOKEN_GENERATE_SIZE, AUTH_TOKEN_LENGTH } from './constants';
+import { AuthToken } from './token';
 
 
 export namespace Session {
@@ -53,11 +54,11 @@ export namespace Session {
     const Model = buildModel<Type>('Session', schema);
 
     const extendedSession = {
-        eey() {
-            return 'hi';
-        },
         toString() {
-            // return computeKey(this)
+            const { key, user } = this as Instance;
+            return key + AuthToken.create({
+                role: user.role,
+            })
         }
     }
 
@@ -75,7 +76,7 @@ export namespace Session {
     }
 
     /** Creates a session from a user */
-    export async function create(user: User.Document) {
+    export async function create(user: LeanDocument<User.Data>) {
         const session = new Model({
             email: user.email,
             key: randomBytes(AUTH_TOKEN_GENERATE_SIZE).toString('hex'),

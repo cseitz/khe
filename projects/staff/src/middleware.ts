@@ -25,13 +25,11 @@ export const middleware: NextMiddleware = async function (request, event) {
                 return NextResponse.redirect(new URL('/', request.url));
             }
             return NextResponse.next();
-        } else {
-            return NextResponse.redirect(new URL('/login', request.url));
         }
     }
 
     /** Allow unauthenticated to login */
-    if (url.startsWith('/login')) {
+    if (url.startsWith('/login') || url.startsWith('/logout')) {
         return NextResponse.next();
     }
 

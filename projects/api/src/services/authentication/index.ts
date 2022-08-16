@@ -33,6 +33,39 @@ export namespace Authentication {
     }
 
 
+    namespace TRPC {
+
+        export async function getSession(ctx: Context) {
+            if (ctx.token) {
+                const session = await Session.get(ctx.token);
+                if (session) {
+                    return session;
+                }
+            }
+        }
+
+        export function provideContext<Extra = {}>(session: Session.Instance | undefined, extra?: Extra) {
+            const ctx = {
+                user: session?.email,
+                session,
+            }
+            return { ...(extra || {}), ...ctx } as Extra & typeof ctx;
+        }
+
+
+        export namespace Middleware {
+
+            export const fillSession = t.middleware(async ({ ctx, next }) => {
+                const session = await getSession(ctx);
+                return next({
+                    ctx: provideContext(session)
+                })
+            })
+
+        }
+    }
+
+
     export const router = t.router({
 
         login: t.procedure
@@ -43,7 +76,7 @@ export namespace Authentication {
             .mutation(async ({ input, ctx }) => {
                 const { email, password } = input;
 
-                const user = await Users.get({ email });
+                const user = await Users.get({ email }).lean();
 
                 if (!user || !user?.password) {
                     throw Error.NotFound(email);
@@ -52,19 +85,41 @@ export namespace Authentication {
                     throw Error.IncorrectPassword(email);
                 }
 
-                // TODO: setup session
+                const session = await Session.create(user);
+                const token = session.toString();
+
+                return {
+                    user,
+                    token,
+                }
+
             }),
 
         logout: t.procedure
+            .use(TRPC.Middleware.fillSession)
             .mutation(async ({ ctx }) => {
-
+                if (ctx.session) {
+                    const { session } = ctx;
+                    Session.invalidate(session);
+                    return true;
+                }
+                return false;
             }),
 
 
         /** Retrieves your own user */
         me: t.procedure
+            .use(TRPC.Middleware.fillSession)
             .query(async ({ ctx }) => {
-
+                if (ctx.session) {
+                    const { session } = ctx;
+                    const { password, ...user } = session.user;
+                    return {
+                        token: session.toString(),
+                        user,
+                    }
+                }
+                return false;
             }),
 
         /** Checks if an email is taken */
@@ -96,7 +151,7 @@ export namespace Authentication {
                 let user: User.Document;
 
                 switch (type) {
-                    
+
                     case 'staff': {
                         const { type, confirm, info, ...data } = input;
                         user = Users.create(data);
