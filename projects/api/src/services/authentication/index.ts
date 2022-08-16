@@ -19,7 +19,9 @@ export namespace Authentication {
     }
 
     export type Context = inferAsyncReturnType<typeof createContext>;
-    export async function createContext({ req, res }: CreateNextContextOptions) {
+    export async function createContext({ req, res }: CreateNextContextOptions): Promise<{
+        token?: string
+    }> {
         if (req.headers.authorization) {
             return {
                 token: req.headers['authorization']

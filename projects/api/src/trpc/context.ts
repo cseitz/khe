@@ -1,6 +1,6 @@
 import { inferAsyncReturnType } from '@trpc/server';
 import { CreateNextContextOptions } from '@trpc/server/adapters/next';
-import { Authentication } from '../services/authentication';
+import { Authentication } from '../services/authentication/index';
 
 
 /** TRPC Procedure Context
