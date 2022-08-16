@@ -35,7 +35,7 @@ export namespace Authentication {
     }
 
 
-    namespace TRPC {
+    export namespace TRPC {
 
         export async function getSession(ctx: Context) {
             if (ctx.token) {
@@ -62,6 +62,74 @@ export namespace Authentication {
                 return next({
                     ctx: provideContext(session)
                 })
+            })
+
+            /** Adds the session to the TRPC Context */
+            function createSessionContext<Extra = {}>(session: Session.Instance, extra?: Extra) {
+                const ctx = {
+                    user: session.email,
+                    session,
+                }
+                return { ...(extra || {}), ...ctx } as Extra & typeof ctx;
+            }
+
+            /** Must be logged in */
+            export const isAuthenticated = t.middleware(async ({ ctx, next }) => {
+                const session = await getSession(ctx);
+                if (session) {
+                    return next({
+                        ctx: createSessionContext(session),
+                    })
+                }
+                throw Error.Denied('authentication');
+            })
+
+            /** Must be a user or higher */
+            export const isUser = t.middleware(async ({ ctx, next }) => {
+                const session = await getSession(ctx);
+                if (session && session.user) {
+                    const { user } = session;
+                    if (user.role === UserRole.User || user.role === UserRole.Staff || user.role === UserRole.Admin) {
+                        return next({
+                            ctx: createSessionContext(session, {
+                                access: 'user',
+                            } as const),
+                        })
+                    }
+                }
+                throw Error.Denied();
+            })
+
+            /** Must be a staff user or higher */
+            export const isStaff = t.middleware(async ({ ctx, next }) => {
+                const session = await getSession(ctx);
+                if (session && session.user) {
+                    const { user } = session;
+                    if (user.role === UserRole.Staff || user.role === UserRole.Admin) {
+                        return next({
+                            ctx: createSessionContext(session, {
+                                access: 'staff',
+                            } as const),
+                        })
+                    }
+                }
+                throw Error.Denied();
+            })
+
+            /** Must be a admin user */
+            export const isAdmin = t.middleware(async ({ ctx, next }) => {
+                const session = await getSession(ctx);
+                if (session && session.user) {
+                    const { user } = session;
+                    if (user.role === UserRole.Admin) {
+                        return next({
+                            ctx: createSessionContext(session, {
+                                access: 'admin'
+                            } as const),
+                        })
+                    }
+                }
+                throw Error.Denied();
             })
 
         }
@@ -178,11 +246,17 @@ export namespace Authentication {
 
                 await user.save();
                 const session = Session.create(user);
-
-                // TODO: apply session
+                
+                return {
+                    token: await session.toString(),
+                }
 
             })
 
     })
 
 }
+
+
+const { fillSession, isAuthenticated, isUser, isStaff, isAdmin } = Authentication.TRPC.Middleware;
+export { fillSession, isAuthenticated, isUser, isStaff, isAdmin };

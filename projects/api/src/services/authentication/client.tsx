@@ -80,6 +80,22 @@ export namespace Authentication {
         });
     }
 
+    export function useRegistration(props: Parameters<typeof api.auth.register.useMutation>[0] = {}) {
+        // @ts-ignore
+        const { onSuccess = null, ...rest } = props
+        const client = useQueryClient();
+        return api.auth.register.useMutation({
+            ...rest,
+            onSuccess(data, vars, context) {
+                if (data.token) {
+                    setToken(data.token);
+                    client.invalidateQueries(['auth.me']);
+                    if (onSuccess) onSuccess(data, vars, context);
+                }
+            }
+        });
+    }
+
     let Myself: UserData;
     export function useMe() {
         const router = useRouter();
