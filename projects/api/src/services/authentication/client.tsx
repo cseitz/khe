@@ -19,11 +19,11 @@ export namespace Authentication {
     }
 
     export function isAuthenticated() {
-        return getToken();
+        return Boolean(getToken());
     }
 
     export function isReturningUser() {
-        return typeof window !== 'undefined' && localStorage.getItem('had:' + STORAGE_KEY)
+        return Boolean(typeof window !== 'undefined' && localStorage.getItem('had:' + STORAGE_KEY))
     }
 
     export function headers(): HTTPHeaders {
@@ -34,6 +34,7 @@ export namespace Authentication {
     }
 
     function setToken(newToken: string | null) {
+        if (token === newToken) return;
         token = newToken;
         if (token) {
             localStorage.setItem(STORAGE_KEY, token);
@@ -44,7 +45,7 @@ export namespace Authentication {
             }
         } else {
             localStorage.removeItem(STORAGE_KEY);
-            document.cookie = `${AUTH_COOKIE}=${newToken}; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
+            document.cookie = `${AUTH_COOKIE}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
         }
 
     }
@@ -105,7 +106,10 @@ export namespace Authentication {
 
         const session = useMemo<SessionData>(() => {
             if (query.data === undefined) return null;
-            if (query.data === false) return false;
+            if (query.data === false) {
+                setToken(null);
+                return false;
+            }
             // if (query.data) return false;
             const { token, user } = query.data;
             setToken(token);

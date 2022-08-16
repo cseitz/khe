@@ -5,9 +5,19 @@ import { z } from 'zod';
 import { UserData } from '../../data/models/user';
 import { User, Users } from '../../models/user';
 import { buildModel } from '../../models/utils/model';
+import { Analytics } from '../analytics';
 import { AUTH_TOKEN_GENERATE_SIZE, AUTH_TOKEN_LENGTH } from './constants';
 import { AuthToken } from './token';
 
+
+const analytics = new Analytics('session', z.object({}), {
+    create(email: string) {
+        return { email }
+    },
+    invalidate(email: string, session: string) {
+        return { email, session }
+    }
+})
 
 export namespace Session {
 
@@ -84,12 +94,17 @@ export namespace Session {
         await session.save();
         const doc = await get(session.key);
         if (!doc) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
+        analytics.emit({ event: 'create' }, doc.email);
         return doc;
     }
 
     /** Invalidates a session */
     export async function invalidate(session: Instance | string) {
-        if (typeof session == 'object') session = session.key;
+        if (typeof session == 'object') {
+            analytics.emit({ event: 'invalidate' }, session.email, session.key);
+            session = session.key;
+        }
+        
         await Model.deleteOne({ key: session });
     }
 

@@ -1,4 +1,5 @@
 import { CssBaseline, ThemeProvider } from '@mui/material';
+import { Authentication } from 'api/auth';
 import { trpc } from 'api/trpc';
 import { AppProps } from 'next/app';
 import { AlertProvider } from 'ui/widgets/alert';
@@ -15,9 +16,18 @@ export function App({ Component, pageProps }: AppProps) {
                 <Component {...pageProps} />
             </AlertProvider>
         </NavigationProvider>
+        <SessionController />
     </ThemeProvider>
 }
 
 export default trpc.withTRPC(
     withSuperJSON(App)
 );
+
+function SessionController() {
+    const [query, session] = Authentication.useSession();
+
+    return <div>
+        session: {JSON.stringify(session)}
+    </div>
+}
