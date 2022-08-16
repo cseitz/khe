@@ -42,16 +42,11 @@ function App({ Component, pageProps }: AppProps) {
     }, [prefersDarkMode]);
     return <ThemeProvider theme={theme}>
         <CssBaseline />
-        <SessionProvider>
-            <>
-                <Guard />
-                <NavigationProvider>
-                    <AlertProvider>
-                        <Component {...pageProps} />
-                    </AlertProvider>
-                </NavigationProvider>
-            </>
-        </SessionProvider>
+        <NavigationProvider>
+            <AlertProvider>
+                <Component {...pageProps} />
+            </AlertProvider>
+        </NavigationProvider>
     </ThemeProvider >
 }
 

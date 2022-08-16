@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { HTTPHeaders } from '@trpc/client';
 import { useRouter } from 'next/router';
-import { createContext, useContext, useEffect, useMemo } from 'react';
+import { ContextType, createContext, useContext, useEffect, useMemo, useRef } from 'react';
 import { UserData } from '../../data/models/user';
 import { api } from '../../trpc/client';
 import { AUTH_COOKIE, AUTH_STORAGE_KEY } from './constants';
@@ -131,10 +131,20 @@ export const SessionContext = createContext<Authentication.SessionData>(null);
 
 export function SessionProvider(props: { children: any }) {
     const { children } = props;
-    const [query, data] = Authentication.useSessionLogic();
-    return <SessionContext.Provider value={data}>
-        {children}
+    // const [query, data] = Authentication.useSessionLogic();
+    const data = useRef<ContextType<typeof SessionContext>>(null);
+    return <SessionContext.Provider value={data.current}>
+        <>
+            <SessionUpdater ref={data} />
+            {children}
+        </>
     </SessionContext.Provider>
+}
+
+function SessionUpdater(props: { ref: any }) {
+    const [query, data] = Authentication.useSessionLogic();
+    
+    return <></>
 }
 
 export function useSession() {
