@@ -5,8 +5,9 @@ import { trpc } from 'api/trpc';
 import { differenceWith, fromPairs, isEqual, reduce, toPairs } from 'lodash';
 import { AppProps } from 'next/app';
 import { useRouter } from 'next/router';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { AlertProvider } from 'ui/widgets/alert';
+import { ModalProvider } from 'ui/widgets/modal';
 import NavigationProvider from '../widgets/navigation';
 
 function App({ Component, pageProps }: AppProps) {
@@ -44,7 +45,9 @@ function App({ Component, pageProps }: AppProps) {
         <CssBaseline />
         <NavigationProvider>
             <AlertProvider>
-                <Component {...pageProps} />
+                <ModalProvider>
+                    <Component {...pageProps} />
+                </ModalProvider>
             </AlertProvider>
         </NavigationProvider>
         <SessionController />

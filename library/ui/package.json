@@ -22,6 +22,9 @@
     "./widgets/alert": {
       "default": "./src/widgets/alert.tsx"
     },
+    "./widgets/modal": {
+      "default": "./src/widgets/modal.tsx"
+    },
     "./widgets/navigation": {
       "default": "./src/widgets/navigation.tsx"
     },

@@ -135,15 +135,18 @@ export const userRouter = t.router({
     // TODO: do get
 
     get: t.procedure
+        // .input(userData.pick({ email: true }).or(z.object({ id: z.string() })).or(z.string()))
         .input(userData.pick({ email: true }))
         .query(async ({ input, ctx }) => {
             const m = Users.withContext(ctx);
-            const { email } = input;
 
-            const user = await m.get(email).lean() //as User.Data;
+            let user = await m.get(input).lean() //as User.Data;
             if (!user) {
                 // throw Error.NotFound(id);
             }
+
+            // @ts-ignore
+            user.info.lastName = user.info.lastName + ':' + Math.random().toString(16);
 
             return { user }
 

@@ -3,10 +3,12 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Api, api } from 'api/trpc';
 import type { inferProcedureInput, inferProcedureOutput } from '@trpc/server';
 import { ContextType, createContext, useContext } from 'react';
+import { useModal } from 'ui/widgets/modal';
+import { UserEditModal } from './modals/user';
 
 export function UserManagement() {
-
     return <Box>
+        <UserEditModal />
         <UserList filter={{ search: 'chris' }} />
     </Box>
 }
@@ -75,7 +77,9 @@ function UserListItem(props: inferProcedureInput<Api['users']['get']> & {
     const {
         email,
         cached = _cached,
-    } = props;
+    } = props; //typeof props === 'string' ? { email: '' } : props;
+
+    const modal = useModal(UserEditModal);
 
     const query = api.users.get.useQuery({ email }, {
         enabled: !cached,
@@ -85,7 +89,8 @@ function UserListItem(props: inferProcedureInput<Api['users']['get']> & {
     if (!user || !user.info) return <></>;
 
     const openModal = () => {
-        alert('Open Modal')
+        // alert('Open Modal')
+        modal.open({ email: user.email })
     }
 
     const mode = 'checkin';
@@ -119,4 +124,9 @@ function UserListItem(props: inferProcedureInput<Api['users']['get']> & {
             <ListItemText primary={primary} secondary={secondary} />
         </ListItemButton>
     </ListItem>
+}
+
+
+function UserModal() {
+
 }
