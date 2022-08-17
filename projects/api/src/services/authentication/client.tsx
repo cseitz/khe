@@ -96,21 +96,31 @@ export namespace Authentication {
         });
     }
 
-    let Myself: UserData;
     export function useMe() {
-        const router = useRouter();
-        const me = api.auth.me.useQuery();
-        if (me.data && me.data.user) {
-            const { user, token } = me.data;
-            setToken(token);
-            Myself = user;
-        } else if (me.data) {
-            // if (!router.pathname.startsWith('/login')) {
-            //     console.log('oof, you are dead')
-            // }
+        const query = api.auth.me.useQuery(undefined, {
+            enabled: false,
+        });
+
+        if (query.data) {
+            return query.data.user;
         }
-        return me;
     }
+
+    // let Myself: UserData;
+    // export function useMe() {
+    //     const router = useRouter();
+    //     const me = api.auth.me.useQuery();
+    //     if (me.data && me.data.user) {
+    //         const { user, token } = me.data;
+    //         setToken(token);
+    //         Myself = user;
+    //     } else if (me.data) {
+    //         // if (!router.pathname.startsWith('/login')) {
+    //         //     console.log('oof, you are dead')
+    //         // }
+    //     }
+    //     return me;
+    // }
 
     export type SessionData = {
         user: Omit<UserData, 'password'>;

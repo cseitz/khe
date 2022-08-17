@@ -8,6 +8,9 @@
     "superjson": "^1.9.1"
   },
   "exports": {
+    "./enum": {
+      "default": "./src/enum.ts"
+    },
     "./next": {
       "default": "./src/next.ts"
     }
