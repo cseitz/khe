@@ -8,6 +8,8 @@ import { Config } from '../../config';
 import { Authentication } from '../services/authentication/client';
 import type { Router } from './router';
 
+export type Api = Router;
+
 /** @export 'trpc' */
 
 function options(config: {

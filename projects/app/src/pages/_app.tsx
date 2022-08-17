@@ -26,6 +26,8 @@ export default trpc.withTRPC(
 
 function SessionController() {
     const [query, session] = Authentication.useSession();
+    
+    if (true) return <></>;
 
     return <div>
         session: {JSON.stringify(session)}

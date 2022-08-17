@@ -99,7 +99,9 @@ function SessionController() {
             }
         }
 
-    }, [session ? session?.role : false])
+    }, [session ? session?.role : false]);
+
+    if (true) return <></>;
 
     return <div>
         session: {JSON.stringify(session)}
