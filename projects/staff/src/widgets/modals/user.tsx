@@ -17,7 +17,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { get } from 'lodash';
 import { ZodUtils } from 'utils/zod';
 
-console.log(ZodUtils);
+// console.log(ZodUtils);
 
 
 type EditData = z.infer<typeof editData>;

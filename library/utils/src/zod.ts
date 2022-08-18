@@ -68,10 +68,34 @@ export namespace ZodUtils {
 //         bruh: z.string(),
 //         ok: z.number(),
 //         eeey: z.object({
-//             pls: z.string()
+//             pls: z.string(),
+//             wat: z.number(),
 //         })
 //     })
 // });
+
+// const sampleA: A = {
+//     hi: 'message',
+//     there: {
+//         bruh: 'hmmm',
+//         ok: 5,
+//         eeey: {
+//             pls: 'yeeee',
+//             wat: 2
+//         }
+//     }
+// }
+
+// type B = z.infer<typeof B>;
+// const B = ZodUtils.toPaths(A);
+
+// const sampleB: B = {
+//     'hi': 'message',
+//     'there.bruh': 'hmmm',
+//     'there.ok': 5,
+//     'there.eeey.pls': 'yeeee',
+//     "there.eeey.wat": 2
+// }
 
 
 // type B = z.infer<typeof B>;
