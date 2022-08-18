@@ -1,5 +1,7 @@
+import { TRPCError } from '@trpc/server';
 import { hashSync } from 'bcrypt';
 import { FilterQuery, HydratedDocument, Model, Schema } from 'mongoose';
+import { FieldPath, FieldPathValue, FieldPathValues, FieldValue } from 'react-hook-form';
 import { z } from 'zod';
 import { staffRegisterInput } from '../data/input/register';
 import { UserData, userData, UserRole, UserStatus } from '../data/models/user';
@@ -76,6 +78,16 @@ export namespace User {
 }
 
 
+namespace Error {
+    export function NotFound(filter: any) {
+        return new TRPCError({
+            code: 'NOT_FOUND',
+            message: `Unable to find user "${JSON.stringify(filter)}"`
+        })
+    }
+}
+
+
 const PARSE_REGEXP = /(?:[^\s("'[\()]+|("|'|\[|\()[^("'[\()]*("|'|\]|\)))+/g;
 function parseSearch(search: string) {
     const tokens = Array.from(search.matchAll(PARSE_REGEXP)).map(o => o[0]);
@@ -127,6 +139,22 @@ export const Users = new class UserMethods extends Methods<{}, typeof User.Audit
         return user;
     }
 
+    async update(filter: Parameters<typeof this['get']>[0], data: {
+        [P in FieldPath<UserData>]?: FieldPathValue<UserData, P>;
+    }) {
+        const user = await this.get(filter);
+        if (!user) throw Error.NotFound(filter);
+        // TODO: do audit logs
+        for (const key in data) {
+            user.set(key, data[key]);
+        }
+        await user.save();
+        // if (!user) throw Error.NotFound(id);
+        // this.audit('status', ticket.status, newStatus);
+        // ticket.status = newStatus;
+        // await ticket.save();
+    }
+
 }({ audit: User.Audit });
 
 
@@ -161,6 +189,24 @@ export const userRouter = t.router({
 
             return { users }
         }),
+
+    update: t.procedure
+        .input(userData.pick({ email: true }).extend({
+            data: userData.pick({
+                email: true,
+                role: true,
+                status: true,
+                // TODO: add info. prefix to info fields
+            }).deepPartial(),
+        }))
+        .mutation(async ({ input, ctx }) => {
+            const m = Users.withContext(ctx);
+            if (input.data) {
+                await m.update({ email: input.email }, input.data as any);
+            }
+            const user = await m.get({ email: input.email }).lean();
+            return { user }
+        })
 
     // create: t.procedure
     //     .input(staffRegisterInput)
