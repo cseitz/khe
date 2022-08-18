@@ -4,11 +4,12 @@ import { FilterQuery, HydratedDocument, Model, Schema } from 'mongoose';
 import { FieldPath, FieldPathValue, FieldPathValues, FieldValue } from 'react-hook-form';
 import { z } from 'zod';
 import { staffRegisterInput } from '../data/input/register';
-import { UserData, userData, UserRole, UserStatus } from '../data/models/user';
+import { UserData, userData, UserInfo, UserRole, UserStatus } from '../data/models/user';
 import { Auditor } from '../services/audit/auditor';
 import { t } from '../trpc';
 import { Methods } from './utils/methods';
 import { buildModel } from './utils/model';
+import { ZodUtils } from 'utils/zod';
 
 
 export namespace User {
@@ -192,12 +193,12 @@ export const userRouter = t.router({
 
     update: t.procedure
         .input(userData.pick({ email: true }).extend({
-            data: userData.pick({
+            data: ZodUtils.toPaths(userData.pick({
                 email: true,
                 role: true,
                 status: true,
-                // TODO: add info. prefix to info fields
-            }).deepPartial(),
+                info: true,
+            }).required()).partial(),
         }))
         .mutation(async ({ input, ctx }) => {
             const m = Users.withContext(ctx);

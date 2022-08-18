@@ -189,12 +189,20 @@ function useFieldAutoSave(field: FieldPath<EditData>) {
                 email: user.email,
                 data: {
                     [field]: value,
+                    // ["info.age"]: 'ok'
                 }
             });
         }
     }, [user, value]);
 }
 
+// type bruh = z.infer<typeof thing>;
+// const thing = ZodUtils.toPaths(userData.pick({
+//     email: true,
+//     role: true,
+//     status: true,
+//     info: true,
+// }).required());
 
 function View() {
     const form = useFormContext<EditData>();

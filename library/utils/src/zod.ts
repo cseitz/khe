@@ -61,20 +61,20 @@ export namespace ZodUtils {
 
 
 
-type A = z.infer<typeof A>;
-const A = z.object({
-    hi: z.string(),
-    there: z.object({
-        bruh: z.string(),
-        ok: z.number(),
-        eeey: z.object({
-            pls: z.string()
-        })
-    })
-});
+// type A = z.infer<typeof A>;
+// const A = z.object({
+//     hi: z.string(),
+//     there: z.object({
+//         bruh: z.string(),
+//         ok: z.number(),
+//         eeey: z.object({
+//             pls: z.string()
+//         })
+//     })
+// });
 
 
-type B = z.infer<typeof B>;
-const B = ZodUtils.toPaths(A);
+// type B = z.infer<typeof B>;
+// const B = ZodUtils.toPaths(A);
 
-console.log(B.shape);
+// console.log(B.shape);
